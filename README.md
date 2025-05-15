@@ -21,11 +21,11 @@ Reading the data does NOT require a bluetooth connection be established ! This m
 
 Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconductor. Here is a screenshot from nRF showing my bluetooth environment. Note I have clicked on 'BATTbank_Smartshunt'  to reveal the data being advertised by my Smartshunt, and all WITHOUT establishing a bluetooth connection.
 
-Attachment 4: nRF screenshot 1
+<img src="images/nRF_screenshot_SS.png" width="150" height="300">
 
 When I click on RAW I get even more detailed information provided as HEX values, plus the ability to copy/share the HEX data string by selecting MORE.
 
-Attachment 5: screenshot "nRF - Smartshunt RAW 4.png"
+<img src="images/nRF_screenshot_SS_RAW.png" width="150" height="300">
 
 ### The Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth tranmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
