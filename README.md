@@ -17,7 +17,7 @@ The Victron device continually updates and advertises the data, transmitting it 
 
 Attachment 3: VC screenshot
 
-![Alt text]images/Victron Connect screenshot.png
+![Alt text](images/VC_screenshot.png)
 
 Reading the data does NOT require a bluetooth connection be established ! This means you don't need to know any UUID or Characteristic codes to access the ad data. All you need is the name of the Victron Device (as shown in VC). The device name will be the default Victron name for that device, unless you have changed the name in the VC settings, as I have done.
 
