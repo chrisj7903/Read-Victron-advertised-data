@@ -7,7 +7,7 @@ There were many challenges along the way and this submission aims to capture the
 Primary reference: Feb 2023 post 'Victron Bluetooth Advertising Protocol' 
 https://communityarchive.victronenergy.com/questions/187303/victron-bluetooth-advertising-protocol.html
 
-That post provided the essential "Extra Manufacturer Data" document by Victron staff, and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. I have also uploaded both to this repostory:
+That post provided the essential "Extra Manufacturer Data" document by Victron staff, and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. I have captured/uploaded both to this repostory:
 
 - Attachment 1: "Extra Manufacturer Data" by Victron 
 - Attachment 2: Long post by Jake Baldwin (dated 19 May 2023)
