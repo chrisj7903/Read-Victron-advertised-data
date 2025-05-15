@@ -15,9 +15,7 @@ That post provided the essential "Extra Manufacturer Data" document by Victron s
 ### The Basics
 The Victron device continually updates and advertises the data, transmitting it over over Bluetooth Low Energy (BLE). You can see the data when running VC on your Android mobile. Here is an example screenshot for my Victron environment showing the advertised data from several devices at once:
 
-Attachment 3: VC screenshot
-
-![Alt text](images/VC_screenshot.png)
+<img src="images/VC_screenshot.png" width="150" height="300">
 
 Reading the data does NOT require a bluetooth connection be established ! This means you don't need to know any UUID or Characteristic codes to access the ad data. All you need is the name of the Victron Device (as shown in VC). The device name will be the default Victron name for that device, unless you have changed the name in the VC settings, as I have done.
 
