@@ -24,7 +24,7 @@ Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconduc
 <img src="images/nRF_screenshot_SS.png" width="150" height="300"> <img src="images/nRF_screenshot_SS_RAW.png" width="150" height="300">
 
 ### The Bluetooth Data
-As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth tranmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
+As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth transmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
 The following two attachments provide detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
 
@@ -51,11 +51,11 @@ All three must be 16 bytes in length when input to the wolfssl decryption algori
 
 The Encryption Key is a sequence of 16 bytes unique to each Victron device. It can be found in the Settings using the VC app on each device.
 
-An IV is included in every Bluetooth tranmission, and it is incremented before (almost) every transmission. It is transmitted unencrypted and arrives as the first pair of bytes in Part 3 of each transmission. Note that the received IV has already been used as an input to the encryption process in the source Victron device, just before Bluetooth transmission. Consequently each decryption must use the specific IV that was transmitted with the encrypted data. 
+An IV is included in every Bluetooth transmission, and it is incremented before (almost) every transmission. It is transmitted unencrypted and arrives as the first pair of bytes in Part 3 of each transmission. Note that the received IV has already been used as an input to the encryption process in the source Victron device, just before Bluetooth transmission. Consequently each decryption must use the specific IV that was transmitted with the encrypted data. 
 
 The IV is transmitted "little endian" and must be input to the wolfssl AES_CTR decryption algorithm in same order, but padded with zeros to form a 16 byte array. In the example data above the IV bytes are 0x790B, therefore the IV array for input to the wolfssl algorithm would be: 79 0B 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 
-The data for decryption is the 15 encrypted bytes (or 12 for a Solar Controller) embedded in each the Bluetooth tranmission. As shown in the example data attachment 6 above these are at the end of Part 3 of the transmission. It also must be padded to 16 bytes.
+The data for decryption is the 15 encrypted bytes (or 12 for a Solar Controller) embedded in each the Bluetooth transmission. As shown in the example data attachment 6 above these are at the end of Part 3 of the transmission. It also must be padded to 16 bytes.
 
 The output of the decryption phase is another 16 byte array containing the actual unencrypted data.
 
