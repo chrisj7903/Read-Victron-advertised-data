@@ -1,6 +1,6 @@
-# Read Victron advertised data
+# Read Victron Advertised Data
 
-Programs to read the 'advertised data' from a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). The program reads, dissects, decrypts and reports the current device status and readings.
+Two programs to read the 'advertised data' from a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). Each program reads, dissects, decrypts and reports the current device status and readings.
 
 There were many challenges along the way and this submission aims to capture the key points in one place, for others wanting to read their Victron device status, without (or in addition to) using the Victron Connect app (VC) on your mobile.
 
