@@ -28,8 +28,8 @@ As you can see from the nRF screenshot above there is a lot of data provided wit
 
 The following two attachments provide detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
 
-Attachment 6: Ad Data Structure - Battery Monitor.txt
-Attachment 7: Ad Data Structure - Solar Controller.txt
+- Attachment 6: Ad Data Structure - Battery Monitor.txt
+- Attachment 7: Ad Data Structure - Solar Controller.txt
 
 ### Decryption
 In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes)
@@ -68,12 +68,12 @@ One Victron design choice added much complication: the data is encoded "little e
 
 The following attachments provide the detailed mappings, one a text, the other as a sketch.
 
-Attachment 8: Bit Field Mapping - Battery Monitor.txt
-Attachment 9: Byte Mapping - Victron BM.jpg
+- Attachment 8: Bit Field Mapping - Battery Monitor.txt
+- Attachment 9: Byte Mapping - Victron BM.jpg
 
 A similar mapping, although less complicated, was developed to decode for a Solar Charger
 
-As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be -2^21 to (2^21)-1 That is -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
+As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be from $-2^{21}$ to $(2^{21}-1)$ or -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
 
 ### My Code Solution
 I have created two Arduino compatible programs that bring all the above knowledge together to receive, extract, decrypt, decode and report the current device values from the advertised data. These programs are available for download at:
