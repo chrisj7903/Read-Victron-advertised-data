@@ -1,4 +1,4 @@
-# Read Victron Advertised Data
+## Read Victron Advertised Data
 
 Two programs to read the 'advertised data' from a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). Each program reads, dissects, decrypts and reports the current device status and readings.
 
@@ -12,7 +12,7 @@ That post provided the essential "Extra Manufacturer Data" document by Victron s
 - Attachment 1: "Extra Manufacturer Data" by Victron 
 - Attachment 2: Long post by Jake Baldwin (dated 19 May 2023)
 
-## The Basics
+### The Basics
 The Victron device continually updates and advertises the data, transmitting it over over Bluetooth Low Energy (BLE). You can see the data when running VC on your Android mobile. Here is an example screenshot for my Victron environment showing the advertised data from several devices at once:
 
 Attachment 3: VC screenshot
@@ -27,7 +27,7 @@ When I click on RAW I get even more detailed information provided as HEX values,
 
 Attachment 5: screenshot "nRF - Smartshunt RAW 4.png"
 
-## The Bluetooth Data
+### The Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth tranmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
 The following two attachments provide detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
@@ -35,7 +35,7 @@ The following two attachments provide detailed breakdown of example data adverti
 Attachment 6: Ad Data Structure - Battery Monitor.txt
 Attachment 7: Ad Data Structure - Solar Controller.txt
 
-## Decryption
+### Decryption
 In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes)
 Now we need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
 
@@ -65,7 +65,7 @@ The output of the decryption phase is another 16 byte array containing the actua
 
 (If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out, and I must say the staff at wolfsssl were very helpful, knowldgeable and professional)
 
-## Extract & Decode the Data Values
+### Extract & Decode the Data Values
 This is where the "Extra Manufacturer Data" document comes into play, in particular the tables on page 3 for "Solar Charger" and "Battery Monitor".
 
 One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
@@ -79,14 +79,14 @@ A similar mapping, although less complicated, was developed to decode for a Sola
 
 As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be -2^21 to (2^21)-1 That is -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
 
-## My Code Solution
+### My Code Solution
 I have created two Arduino compatible programs that bring all the above knowledge together to receive, extract, decrypt, decode and report the current device values from the advertised data. These programs are available for download at:
 
 BatteryMonitor on GitHub
 
 SolarCharger on GitHub
 
-## My Hardware
+### My Hardware
 I used the Arduino IDE to develop these programs to run on ESP-32 devices with in-built Bluetooth Low Energy (BLE) capability. The code was tested on: 
 
 1) a SparkFun MicroMod WiFi Function Board with its ESP32-WROOM-32E 
