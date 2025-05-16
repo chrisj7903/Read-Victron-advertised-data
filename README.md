@@ -1,10 +1,11 @@
 ## Read Victron Advertised Data
-This submission provides two Arduino compatible programs that bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data'. This is continually transmitted over Bluetooth Low Energy (BLE) by a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). 
-
-- BatteryMonitor 
-- SolarCharger 
+This submission provides two Arduino compatible programs (one for a Victron battery monitor the other a Victron solar controller). These programs bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data' that is continually transmitted over Bluetooth Low Energy (BLE) by the Victron device
 
 ### My Hardware
+My battery monitors are a [Victron Smartshunt](https://www.victronenergy.com/battery-monitors/smart-battery-shunt) and several [Victron BMV-712 Smart](https://www.victronenergy.com/display-and-panels/bmv-712-smart).
+
+My solar controller is a [Victron BlueSolar MPPT 100/30](https://www.victronenergy.com/solar-charge-controllers/mppt-100-30)
+
 I used the Arduino IDE to develop these programs to run on ESP-32 devices with in-built BLE capability. The code was tested on: 
 
 - [SparkFun MicroMod WiFi Function Board](https://www.sparkfun.com/sparkfun-micromod-wifi-function-board-esp32.html) with its in-built ESP32-WROOM-32E.
@@ -33,7 +34,7 @@ Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconduc
 ### The Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth transmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
-The two text files following provide a detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
+The two text files following provide a detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Controller (MPPT100/30).
 
 - [Ad Data Structure - Battery Monitor](docs/Ad%20Data%20Structure%20-%20Battery%20Monitor.txt)
 - [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20Controller.txt)
@@ -67,7 +68,7 @@ The output of the decryption phase is another 16 byte array containing the actua
 (If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out, and I must say the staff at wolfsssl were very helpful, knowldgeable and professional)
 
 ### Extract & Decode the Data Values
-This is where the "Extra Manufacturer Data" document comes into play, in particular the tables on page 3 for "Solar Charger" and "Battery Monitor".
+This is where the "Extra Manufacturer Data" document comes into play, in particular the tables on page 3 for "Solar Controller" and "Battery Monitor".
 
 One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
 
@@ -76,8 +77,15 @@ The following attachments describe/show the detailed mappings for a Battery Moni
 - [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
 - [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
 
-(TBD: A similar mapping, although less complicated, is needed to decode for a Solar Charger. For - look at the code for the mapping)
+(TBD: A similar mapping, although less complicated, is needed to decode for a Solar Controller. For - look at the code for the mapping)
 
 As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be from $-2^{21}$ to $(2^{21}-1)$ or -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
+
+### The Code
+
+- BatteryMonitor 
+- SolarController 
+
+
 
 ----------------------------- / the end / ---------------------------
