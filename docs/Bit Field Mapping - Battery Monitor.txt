@@ -1,0 +1,60 @@
+Following is the detailed bit field mapping for 16 decrypted bytes of data from a Victron Battery Monitor:
+
+Notes: 
+1) multiple bytes are little-endian (i.e ordering of double/triple bytes is reversed)
+2) the signed values use 2's complement, so the sign bit must be handled
+
+LSB: Least Significant bits/Byte
+MIB: Middle            bits/byte (triples only)
+MSB: Most significant  bits/byte
+
+In order of bytes received:
+---------------------------
+// Time To Go in minutes (16 bits)
+byte  0 Time To Go LSB bits  7-0 
+byte  1 Time To Go MSB bits 15-8
+
+// Battery Volts (16 bits, signed, units 10mV)
+byte  2 Batt Volts LSB bits  7-0 
+byte  3 Batt Volts MSB bits 14-8 
+byte  3 Batt Volts sign bit 15    
+
+// Alarms status (2 bytes, 8 bits each)
+byte  4 Alarms status LSB bits  7-0  (Battery Monitor status) 
+byte  5 Alarms status MSB bits 15-8 (Inverter status)
+
+// when aux = 0 read Aux Volts (16 bits, signed, units 10mV)
+// (byte 8 below provides Aux input type selecxtion)
+byte  6 Auxillary Volts LSB bits  7-0 
+byte  7 Auxillary Volts MSB bits 14-8
+byte  7 Auxillary Volts sign bit 15
+// when aux = 1 read mid-point Volts (16 bits, units 10mV)
+byte  6 Mid-point Volts LSB bits 7-0 
+byte  7 Mid-point Volts MSB bits 15-8
+// when aux = 2 read temperature in Kelvin (16 bits, units 10mK)
+byte  6 Kelvin degrees LSB bits  7-0 
+byte  7 Kelvin degrees MSB bits 15-8
+
+byte  8 Aux input type: bits 0,1 =  0:aux 1:mid 2:Kelvin 3:none 
+
+// Battery milli-Amps (22 bits, signed)
+byte  8 bits 7-2  LSB Batt Amps: bottom 6 bits of mA value
+byte  9 bits 1,0  LSB Batt Amps:  extra 2 bits 
+        bits 7-2  MIB Batt Amps: middle 6 bits 
+byte 10 bits 1,0  MIB Batt Amps:  extra 2 bits 
+        bits 6-2  MSB Batt Amps:    top 5 bits of mA value
+        bit  7        Batt A sign bit   1 bit
+
+// Consumed Ah (20 bits, units 100mAh)
+byte 11 Consumed Ah LSB bits  7-0
+byte 12 Consumed Ah MIB bits 15-8
+byte 13 Consumed Ah MSB bits  3-0 (upper 4 bits of Ah)
+
+// State of Charge (10 bits, units 0.1%)
+byte 13 SOC LSB bits 7-4 (lower 4 bits of SOC)
+byte 14 SOC MSB bits 5-9 (upper 6 bits of SOC)
+
+byte 14 bits 6,7 unused 
+byte 15 bits 0-7 unused
+------------------------------------------------------------------------ 
+A similar mapping, although less complicated, was developed to decode for a Solar Charger

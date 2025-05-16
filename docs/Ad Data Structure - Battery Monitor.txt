@@ -1,0 +1,56 @@
+Following is a detailed breakdown of example data advertised by a Victron BMV-712 battery monitor
+
+NB: I previously changed its name set to "P#3" in settings fr this device.
+
+-----------------------------
+RAW data - from nRF Connect App
+0x0201061AFFE102100281A302790B7D775FB778802AF8032B78F35CB622CE0409502333
+        ^                 ^                                   ^
+
+Decoding this in 4 parts (marked ^ above):
+1:020106 
+2:1AFFE102100281A302
+3:790B7D775FB778802AF8032B78F35CB622CE
+4:0409502333
+
+part 1 (1+2 bytes)
+------
+02 len:   2 bytes
+01 type:  1 (flags)
+06 value: 6 binary:0000 0110 (function of these bits is unknown, but they are not needed anyway)
+
+part 2 (1+8 bytes)
+------
+1A len : 0x1A (26) number of bytes following in parts 2 and 3 = 8+18 = 26)
+FF type: 0xFF (indicates the following 25 bytes are Vendor specific)
+E102 provides the company identifier (little endian) = 0x02E1  = "Victron Energy BV" (see Bluetooth Assigned Numbers p.234)
+10   Manufacturer Data Record Type (always (0x10)
+0281 Model Id for BMV-712 Battery Monitor
+A3   "read out type" not always 0xA3 (JB ref A shows 0xA0)
+02   Record Type: 0x02 = Battery Monitor (ref B)
+
+all the data above remains constant across transmissions, whereas
+the (encrypted) data below is updated continually
+(except part 3, first byte of encryption key 0x7D, which remains constant)
+
+Part 3 (2+1+15 = 18 bytes)
+------ 
+790B Nonce/Counter, the Initialisation Vector (IV) or "salt" used in decryption (little endian)
+
+7D  (constant)  Must match first byte of encryption key (byte 0). Provides for a quick check that the right key has been used.
+
+775FB778802AF8032B78F35CB622CE04 Encrypted data (15 bytes) 
+
+Note that only 15 encypted bytes tranmitted, not 16 as listed for "Battery Monitors" in the "Extra Manufacturer Data" document. 
+This is presumably because the last byte is not used, so the Victron code simply doesn't send it.
+
+Part 4 (1+1+3 bytes)
+------
+0409502333 Contains the device name
+
+04 len : 0x04 (4 bytes after this byte)
+09 type: 0x09 Complete Local name (from BT Assigned Numbers doc, table 2.3 Common Data Types)
+50 23 33 = ASCII name = P#3`
+P  #  3
+
+--------------------------------------------------------------------------------------------
