@@ -27,7 +27,7 @@ As you can see from the nRF screenshot above there is a lot of data provided wit
 The following two attachments provide detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
 
 - [Ad Data Structure - Battery Monitor](docs/Ad%20Data%20Structure%20-%20Battery%20Monitor.txt)
-- [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20controller.txt)
+- [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20Controller.txt)
 
 ### Decryption
 In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes)
