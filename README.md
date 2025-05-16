@@ -1,5 +1,5 @@
 ## Read Victron Advertised Data
-Arduino compatible programs that bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data'. This is continually transmitted over Bluetooth Low Energy (BLE) by a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). 
+This submission provides two Arduino compatible programs that bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data'. This is continually transmitted over Bluetooth Low Energy (BLE) by a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). 
 
 - BatteryMonitor 
 - SolarCharger 
