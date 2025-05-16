@@ -4,7 +4,8 @@ Two programs to read the 'advertised data' from a Victron battery monitor (e.g. 
 
 There were many challenges along the way and this submission aims to capture the key points in one place, for others wanting to read their Victron device status, without (or in addition to) using the Victron Connect app (VC) on your mobile.
 
-Primary reference: Feb 2023 post 'Victron Bluetooth Advertising Protocol' 
+Primary reference: Feb 2023 post 'Victron Bluetooth Advertising Protocol'
+
 https://communityarchive.victronenergy.com/questions/187303/victron-bluetooth-advertising-protocol.html
 
 That post provided the essential "Extra Manufacturer Data" document by Victron staff, and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. Both have been uploaded into this repostory:
