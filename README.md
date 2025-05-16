@@ -35,7 +35,7 @@ Now we need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data 
 
 As explained in "Extra Manufacturer Data" (attachment 1) Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
 
-As I'm developing in the Arduino environment I looked to that eco-system for a suitable decryption library, and soon settled on the wolfssl library  https://www.wolfssl.com/ The library can be downloaded and installed using the library manager in the Arduino IDE, in the usual way.
+As I'm developing in the Arduino environment I looked to that eco-system for a suitable decryption library, and soon settled on the wolfssl library  https://www.wolfssl.com/ which can be downloaded and installed in the usual way using the Arduino IDE library manager.
 
 The wolfSSL AES decryption algorithm I used (wc_AesCtrDecrypt) is just a small subset the of many algorithms available in the wolfSSL library. All are documented in the [wolfSSL Manual](https://www.wolfssl.com/documentation/manuals/wolfssl/group__AES.html)
 
