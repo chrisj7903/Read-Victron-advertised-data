@@ -24,16 +24,15 @@ Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconduc
 ### The Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth transmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
-The following two attachments provide detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
+The two text files following provide a detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Charger (MPPT100/30).
 
 - [Ad Data Structure - Battery Monitor](docs/Ad%20Data%20Structure%20-%20Battery%20Monitor.txt)
 - [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20Controller.txt)
 
 ### Decryption
-In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes)
-Now we need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
+In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes). We now need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
 
-As explained in "Extra Manufacturer Data" (attachment 1) Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
+As explained in "Extra Manufacturer Data" document, Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
 
 As I'm developing in the Arduino environment I looked to that eco-system for a suitable decryption library, and soon settled on the wolfssl library  https://www.wolfssl.com/ which can be downloaded and installed in the usual way using the Arduino IDE library manager.
 
@@ -88,16 +87,4 @@ https://www.sparkfun.com/sparkfun-micromod-wifi-function-board-esp32.html
 2) a WeMos D1 R32 (ESP32) Development Board. It also uses the ESP32-WROOM
 https://www.makerstore.com.au/product/elec-esp32-d1-r32/
 
------------------------------------------------------------ // -------------------------------------------------------
-
-- Attachment 1: "Extra Manufacturer Data" document by Victron 
-- Attachment 2: Long post by Jake Baldwin (dated 19 May 2023)
-- Attachment 3: VC screenshot
-- Attachment 4: nRF screenshot
-- Attachment 5: screenshot "nRF - Smartshunt RAW 4.png"
-- Attachment 6: Ad Data Structure - Battery Monitor.txt
-- Attachment 7: Ad Data Structure - Solar Controller.txt
-- Attachment 8: Bit Field Mapping - Battery Monitor.txt
-- Attachment 9: Byte Mapping - Victron BM.jpg
-  
-------------------------------------------------------- / the end / --------------------------------------------------
+----------------------------- / the end / ---------------------------
