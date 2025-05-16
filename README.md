@@ -40,9 +40,9 @@ As I'm developing in the Arduino environment I looked to that eco-system for a s
 The wolfSSL AES decryption algorithm I used (wc_AesCtrDecrypt) is just a small subset the of many algorithms available in the wolfSSL library. All are documented in the [wolfSSL Manual](https://www.wolfssl.com/documentation/manuals/wolfssl/group__AES.html)
 
 To perform a decryption three user inputs are required:
-1) The Encryption Key
-2) An Invitialization Vector "IV" (also known as "nonce/counter" or "salt")
-3) The encrypted data, to be decrypted
+- The Encryption Key
+- An Invitialization Vector "IV" (also known as "nonce/counter" or "salt")
+- The encrypted data, to be decrypted
 
 All three must be 16 bytes in length when input to the wolfssl decryption algorithm, padded with zeros if needs be.
 
@@ -63,12 +63,12 @@ This is where the "Extra Manufacturer Data" document comes into play, in particu
 
 One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
 
-The following attachments describe/show the detailed mappings, as text and a drawing:
+The following attachments describe/show the detailed mappings for a Battery Monitor, as text and a drawing:
 
 - [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
 - [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
 
-A similar mapping, although less complicated, was developed to decode for a Solar Charger
+(TBD: A similar mapping, although less complicated, is needed to decode for a Solar Charger. For - look at the code for the mapping)
 
 As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be from $-2^{21}$ to $(2^{21}-1)$ or -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
 
