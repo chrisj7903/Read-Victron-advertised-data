@@ -83,11 +83,16 @@ As an aside I did spot a couple of small errors in the Battery Monitor table in 
 
 ### The Code
 
-- [BatteryMonitor](/BatteryMonitor)
+#### [BatteryMonitor](/BatteryMonitor)
+This program is built from the following files 
+
+- BatteryMonitor.ino\tis the main body, with setup() and loop() per the Arduino environment
+- VBM.h/VBM.cpp\tthis pair provide the detailed algorithms for reading a Victron Battery Monitor (VBM)
+- ZZ.h/ZZ.cpp\tthis pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
 
 
   
-- [SolarController](/SolarController) 
+#### [SolarController](/SolarController) 
 
 
 
