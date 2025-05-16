@@ -1,5 +1,4 @@
 ## Read Victron Advertised Data
-
 Arduino compatible programs that bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data'. This is continually transmitted over Bluetooth Low Energy (BLE) by a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). 
 
 - BatteryMonitor 
@@ -80,21 +79,5 @@ The following attachments describe/show the detailed mappings for a Battery Moni
 (TBD: A similar mapping, although less complicated, is needed to decode for a Solar Charger. For - look at the code for the mapping)
 
 As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be from $-2^{21}$ to $(2^{21}-1)$ or -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
-
-### My Code Solution
-I have created two Arduino compatible programs that bring all the above knowledge together to receive, extract, decrypt, decode and report the current device values from the advertised data. These programs are available for download at:
-
-BatteryMonitor on GitHub
-
-SolarCharger on GitHub
-
-### My Hardware
-I used the Arduino IDE to develop these programs to run on ESP-32 devices with in-built Bluetooth Low Energy (BLE) capability. The code was tested on: 
-
-1) a SparkFun MicroMod WiFi Function Board with its ESP32-WROOM-32E 
-https://www.sparkfun.com/sparkfun-micromod-wifi-function-board-esp32.html
-
-2) a WeMos D1 R32 (ESP32) Development Board. It also uses the ESP32-WROOM
-https://www.makerstore.com.au/product/elec-esp32-d1-r32/
 
 ----------------------------- / the end / ---------------------------
