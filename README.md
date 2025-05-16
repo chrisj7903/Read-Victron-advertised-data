@@ -67,7 +67,7 @@ One Victron design choice added much complication: the data is encoded "little e
 The following attachments describe/show the detailed mappings, as text and a drawing:
 
 - [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
-- [Byte Mapping - Victron BM.jpg](Byte%20Mapping%20-%20Victron%20BM.jpg)
+- [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
 
 <img src="docs/Byte%20Mapping%20-%20Victron%20BM.jpg" width="150" height="300">
 
