@@ -67,20 +67,6 @@ The output of the decryption phase is another 16 byte array containing the actua
 
 (If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out, and I must say the staff at wolfsssl were very helpful, knowldgeable and professional)
 
-### Extract & Decode the Data Values
-This is where the "Extra Manufacturer Data" document comes into play, in particular the tables on page 3 for "Solar Controller" and "Battery Monitor".
-
-One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
-
-The following attachments describe/show the detailed mappings for a Battery Monitor, as text and a drawing:
-
-- [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
-- [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
-
-(TBD: A similar mapping, although less complicated, is needed to decode for a Solar Controller. For - look at the code for the mapping)
-
-As an aside I did spot a couple of small errors in the Battery Monitor table in "Extra Manufacturer Data". The battery current is a 22 bit signed integer. Consequently its range must be from $-2^{21}$ to $(2^{21}-1)$ or -2097151 to 2097151 mA, i.e half the -4194 to 4194 Amp range shown in the table. And the N/A value must be 0x1FFFFF not 0x3FFFFF.
-
 ### The Code
 
 #### [BatteryMonitor](/BatteryMonitor)
@@ -90,12 +76,11 @@ This program is built from the following files
 The main body, with setup() and loop() per the Arduino environment
 
 ##### VBM.h/VBM.cpp
-This pair provide the detailed algorithms for reading a Victron Battery Monitor (VBM)
-This is where the "Extra Manufacturer Data" document comes into play, in particular the "Battery Monitor" table on page 3.
+This pair provide the detailed algorithms to read, dissect, decrypt, decode and report data from a Victron Battery Monitor (VBM)
 
-One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
+The principles of reading, dissecting and decrypting were introduced above, whereas the following describes decoding of the decrypted data, in preparation for reporting. This is where the "Extra Manufacturer Data" document comes into play, in particular the "Battery Monitor" table on page 3.
 
-The following attachments describe/show the detailed mappings for a Battery Monitor, as text and a drawing:
+One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value. The following items describe/show these detailed mappings for a Battery Monitor, as text and a drawing:
 
 - [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
 - [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
@@ -113,11 +98,12 @@ This program is built from the following files
 The main body, with setup() and loop() per the Arduino environment
 
 ##### VSC.h/VSC.cpp
-This pair provide the detailed algorithms for reading a Victron Solar Controller (VSC)
+This pair provide the detailed algorithms to read, dissect, decrypt, decode and report data from a Victron Solar Controller (VSC)
 
-This is where the "Extra Manufacturer Data" document comes into play, in particular the "Solar Controller" table on page 3.
+The principles of reading, dissecting and decrypting were introduced above.
 
-Fortunately the byte mapping is less complicated in this case and can be readily understood by looking at the code directly. 
+The decoding of the decrypted data, in preparation for reporting follows similar structure and logic to the VBM routines, except referencung  
+the "Solar Controller" table on page 3 of the "Extra Manufacturer Data" document. Fortunately the byte mapping is much less complicated in this case and can be readily understood by looking at the code directly. 
 
 ##### ZZ.h/ZZ.cpp
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
