@@ -64,9 +64,13 @@ This is where the "Extra Manufacturer Data" document comes into play, in particu
 
 One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value.
 
-The following attachments provide the detailed mappings, one a text, the other as a sketch.
+The following attachments describe/show the detailed mappings, as text and a drawing:
 
-- Attachment 8: Bit Field Mapping - Battery Monitor.txt
+- [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
+- [Byte Mapping - Victron BM.jpg](Byte%20Mapping%20-%20Victron%20BM.jpg)
+
+<img src="docs/Byte%20Mapping%20-%20Victron%20BM.jpg" width="150" height="300">
+
 - Attachment 9: Byte Mapping - Victron BM.jpg
 
 A similar mapping, although less complicated, was developed to decode for a Solar Charger
