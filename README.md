@@ -37,8 +37,7 @@ As explained in "Extra Manufacturer Data" (attachment 1) Victron use the AES Cou
 
 As I'm developing in the Arduino environment I looked to that eco-system for a suitable decryption library, and soon settled on the wolfssl library  https://www.wolfssl.com/ The library can be downloaded and installed using the library manager in the Arduino IDE, in the usual way.
 
-The wolfSSL AES decryption algorithm I used (wc_AesCtrDecrypt) is just a small subset the of many algorithms available in the wolfSSL library. All are documented in the wolfSSL Manual at 
-https://www.wolfssl.com/documentation/manuals/wolfssl/group__AES.html
+The wolfSSL AES decryption algorithm I used (wc_AesCtrDecrypt) is just a small subset the of many algorithms available in the wolfSSL library. All are documented in the [wolfSSL Manual](https://www.wolfssl.com/documentation/manuals/wolfssl/group__AES.html)
 
 To perform a decryption three user inputs are required:
 1) The Encryption Key
@@ -68,10 +67,6 @@ The following attachments describe/show the detailed mappings, as text and a dra
 
 - [Bit Field Mapping - Battery Monitor.txt](Bit%20Field%20Mapping%20-%20Battery%20Monitor.txt')
 - [Byte Mapping - Victron BM.jpg](docs/Byte%20Mapping%20-%20Victron%20BM.jpg)
-
-<img src="docs/Byte%20Mapping%20-%20Victron%20BM.jpg" width="150" height="300">
-
-- Attachment 9: Byte Mapping - Victron BM.jpg
 
 A similar mapping, although less complicated, was developed to decode for a Solar Charger
 
