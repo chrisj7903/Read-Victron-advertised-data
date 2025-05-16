@@ -33,7 +33,7 @@ The following two attachments provide detailed breakdown of example data adverti
 In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes)
 Now we need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
 
-As explained in "Extra Manufacturer Data" (attachment 1) Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a "Block Cipher Mode of Operation" that turns a block cipher into a stream cipher. For further information: https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR
+As explained in "Extra Manufacturer Data" (attachment 1) Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
 
 As I'm developing in the Arduino environment I looked to that eco-system for a suitable decryption library, and soon settled on the wolfssl library  https://www.wolfssl.com/ The library can be downloaded and installed using the library manager in the Arduino IDE, in the usual way.
 
