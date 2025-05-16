@@ -83,8 +83,11 @@ As an aside I did spot a couple of small errors in the Battery Monitor table in 
 
 ### The Code
 
-- BatteryMonitor 
-- SolarController 
+- [BatteryMonitor](/BatteryMonitor)
+
+
+  
+- [SolarController](/SolarController) 
 
 
 
