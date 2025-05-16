@@ -9,8 +9,9 @@ https://communityarchive.victronenergy.com/questions/187303/victron-bluetooth-ad
 
 That post provided the essential "Extra Manufacturer Data" document by Victron staff, and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. I have captured/uploaded both to this repostory:
 
-- Attachment 1: "Extra Manufacturer Data" by Victron 
-- Attachment 2: Long post by Jake Baldwin (dated 19 May 2023)
+["Extra Manufacturer Data" by Victron](docs/Victron_Extra_Manufacturer_Data)
+
+[Post by Jake Baldwin & Chris Jackson](docs/Victron_posts_Jake_Baldwin_Chris_Jackson)
 
 ### The Basics
 The Victron device continually updates and advertises the data, transmitting it over over Bluetooth Low Energy (BLE). You can see the data when running VC on your Android mobile. Here is an example screenshot for my Victron environment showing the advertised data from several devices at once:
