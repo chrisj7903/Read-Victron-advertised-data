@@ -1,7 +1,17 @@
 ## Read Victron Advertised Data
 
-Two programs to read the 'advertised data' from a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). Each program reads, dissects, decrypts and reports the current device status and readings.
+Arduino compatible programs that bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data'. This is continually transmitted over Bluetooth Low Energy (BLE) by a Victron battery monitor (e.g. Smartshunt, BMV-712) or solar controller (e.g. MPPT 100/30). 
 
+- BatteryMonitor 
+- SolarCharger 
+
+### My Hardware
+I used the Arduino IDE to develop these programs to run on ESP-32 devices with in-built BLE capability. The code was tested on: 
+
+- [SparkFun MicroMod WiFi Function Board](https://www.sparkfun.com/sparkfun-micromod-wifi-function-board-esp32.html) with its in-built ESP32-WROOM-32E.
+- [WeMos D1 R32 (ESP32) Development Board](https://www.makerstore.com.au/product/elec-esp32-d1-r32/) that is also fitted with a ESP32-WROOM.
+
+### Key Inputs
 There were many challenges along the way and this submission aims to capture the key points in one place, for others wanting to read their Victron device status, without (or in addition to) using the Victron Connect app (VC) on your mobile.
 
 My primary reference is [the Feb 2023 post 'Victron Bluetooth Advertising Protocol' by Victron staff](https://communityarchive.victronenergy.com/questions/187303/victron-bluetooth-advertising-protocol.html). This post included the essential "Extra Manufacturer Data" document and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. Both have been uploaded into this repository for convenience:
