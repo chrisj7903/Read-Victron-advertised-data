@@ -69,7 +69,7 @@ The output of the decryption phase is another 16 byte array containing the actua
 
 ### 6. The Code
 
-#### [BatteryMonitor](/BatteryMonitor)
+#### 6.1 [BatteryMonitor](/BatteryMonitor)
 This program is built from the following files 
 
 ##### BatteryMonitor.ino
@@ -91,7 +91,7 @@ One Victron design choice added much complication: the data is encoded "little e
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
 
   
-#### [SolarController](/SolarController) 
+#### 6.2 [SolarController](/SolarController) 
 This program is built from the following files 
 
 ##### SolarController.ino
@@ -108,10 +108,8 @@ the "Solar Controller" table on page 3 of the "Extra Manufacturer Data" document
 ##### ZZ.h/ZZ.cpp
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
 
-#### Libraries
-Two libraries are used when compiling this program, the BLE library (Bluetooth Low Energy) and wolfSSL.
+#### 6.3 Libraries
+Two libraries are used when compiling this program, the BLE library for Bluetooth Low Energy functionality and wolfssl for the AES-CTR decryption algorithms.
 The BLE library is built into the Arduino IDE these days (I'm using V2.3.6) 
-The wolfSSL library must be added using the library manager of the IDE.
-
-
+The wolfssl library must be added using the library manager of the IDE, jsut seach for wolfssl, check it's from wolfSSL Inc then install.
 ----------------------------- / the end / ---------------------------
