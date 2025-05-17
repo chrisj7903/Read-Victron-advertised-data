@@ -1,5 +1,5 @@
 ## Read Victron Advertised Data
-This submission provides two Arduino compatible programs (one for a Victron battery monitor the other a Victron solar controller). These programs bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data' that is continually transmitted over Bluetooth Low Energy (BLE) by the Victron device
+This submission provides two Arduino compatible programs (one for any Victron battery monitor the other any Victron solar controller). These programs bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data' that is continually transmitted over Bluetooth Low Energy (BLE) by the Victron device
 
 ### 1. My Hardware
 My battery monitors are a [Victron Smartshunt](https://www.victronenergy.com/battery-monitors/smart-battery-shunt) and several [Victron BMV-712 Smart](https://www.victronenergy.com/display-and-panels/bmv-712-smart).
