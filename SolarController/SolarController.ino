@@ -1,7 +1,7 @@
 /* ===== SolarController ===== 
 
 Retrieves, decrypts, disassembles and reports the Bluetooth 'advertised data' 
-from my Victron MPPT 100/30 Solar Controller. 
+from a Victron MPPT 100/30 Solar Controller. 
 
 The 'advertised data' is encrypted and embedded as the "Extra Manufacturer Data" that 
 is repeatedly transmitted over Bluetooth Low Energy (BLE) and can be seen/read without 
