@@ -78,7 +78,7 @@ The main body, with setup() and loop() per the Arduino environment
 ##### VBM.h/VBM.cpp
 This pair provide the detailed algorithms to read, dissect, decrypt, decode and report data from a Victron Battery Monitor (VBM)
 
-The principles of reading, dissecting and decrypting were introduced above, whereas the following describes decoding of the decrypted data, in preparation for reporting. This is where the "Extra Manufacturer Data" document comes into play, in particular the "Battery Monitor" table on page 3.
+The principles of reading, dissecting and decrypting were introduced above, whereas the following describes decoding of the decrypted data, in preparation for reporting. This is where the bit field definitions in the "Extra Manufacturer Data" document comes into play, in particular the "Battery Monitor" table on page 3.
 
 One Victron design choice added much complication: the data is encoded "little endian" or in reverse order. This is easy to handle for 16 bit (2 byte) values, just swap the bytes. But some values are 2,9,10,20 or 22 bits in length and this greatly complicates the process of mapping from the decrypted bytes to each value. The following items describe/show these detailed mappings for a Battery Monitor, as text and a drawing:
 
