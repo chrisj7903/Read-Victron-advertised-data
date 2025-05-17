@@ -31,7 +31,7 @@ Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconduc
 
 <img src="images/nRF_screenshot_SS.png" width="150" height="300"> <img src="images/nRF_screenshot_SS_RAW.png" width="150" height="300">
 
-### 4. The Bluetooth Data
+### 4. Dissecting the Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth transmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
 The two text files following provide a detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Controller (MPPT100/30).
