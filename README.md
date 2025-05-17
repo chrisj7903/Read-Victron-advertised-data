@@ -1,7 +1,7 @@
 ## Read Victron Advertised Data
 This submission provides two Arduino compatible programs (one for a Victron battery monitor the other a Victron solar controller). These programs bring together all the following knowledge to receive, dissect, decrypt, decode and report the current device status and readings from the 'advertised data' that is continually transmitted over Bluetooth Low Energy (BLE) by the Victron device
 
-### My Hardware
+### 1. My Hardware
 My battery monitors are a [Victron Smartshunt](https://www.victronenergy.com/battery-monitors/smart-battery-shunt) and several [Victron BMV-712 Smart](https://www.victronenergy.com/display-and-panels/bmv-712-smart).
 
 My solar controller is a [Victron BlueSolar MPPT 100/30](https://www.victronenergy.com/solar-charge-controllers/mppt-100-30)
@@ -11,7 +11,7 @@ I used the Arduino IDE to develop these programs to run on ESP-32 devices with i
 - [SparkFun MicroMod WiFi Function Board](https://www.sparkfun.com/sparkfun-micromod-wifi-function-board-esp32.html) with its in-built ESP32-WROOM-32E.
 - [WeMos D1 R32 (ESP32) Development Board](https://www.makerstore.com.au/product/elec-esp32-d1-r32/) that is also fitted with a ESP32-WROOM.
 
-### Key Inputs
+### 2. Key Inputs
 There were many challenges along the way and this submission aims to capture the key points in one place, for others wanting to read their Victron device status, without (or in addition to) using the Victron Connect app (VC) on your mobile.
 
 My primary reference is [the Feb 2023 post 'Victron Bluetooth Advertising Protocol' by Victron staff](https://communityarchive.victronenergy.com/questions/187303/victron-bluetooth-advertising-protocol.html). This post included the essential "Extra Manufacturer Data" document and further down the page were two long posts (by Jake Baldwin and Chris Jackson respectively) that I found very useful. Both have been uploaded into this repository for convenience:
@@ -20,7 +20,7 @@ My primary reference is [the Feb 2023 post 'Victron Bluetooth Advertising Protoc
 
 - [Posts by Jake Baldwin & Chris Jackson](docs/Victron_posts_Jake_Baldwin_Chris_Jackson.pdf)
 
-### The Basics
+### 3. The Basics
 The Victron device continually updates and advertises the data, transmitting it over over Bluetooth Low Energy (BLE). You can see the data when running VC on your Android mobile. Here is an example screenshot for my Victron environment showing the advertised data from several devices at once:
 
 <img src="images/VC_screenshot.png" width="150" height="300">
@@ -31,7 +31,7 @@ Another app I found extremely useful is 'nRF connect' (nRF) by Nordic semiconduc
 
 <img src="images/nRF_screenshot_SS.png" width="150" height="300"> <img src="images/nRF_screenshot_SS_RAW.png" width="150" height="300">
 
-### The Bluetooth Data
+### 4. The Bluetooth Data
 As you can see from the nRF screenshot above there is a lot of data provided with every bluetooth transmission. The data can easily total 50 bytes or more and it is refreshed every 200ms or so. It also contains up to 16 bytes of encrypted 'extra manufacturer data' that we need to extract, decrypt, decode and report.
 
 The two text files following provide a detailed breakdown of example data advertised by a Battery Monitor (BMV-712) and a Solar Controller (MPPT100/30).
@@ -39,7 +39,7 @@ The two text files following provide a detailed breakdown of example data advert
 - [Ad Data Structure - Battery Monitor](docs/Ad%20Data%20Structure%20-%20Battery%20Monitor.txt)
 - [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20Controller.txt)
 
-### Decryption
+### 5. Decryption
 In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes). We now need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
 
 As explained in "Extra Manufacturer Data" document, Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
@@ -67,7 +67,7 @@ The output of the decryption phase is another 16 byte array containing the actua
 
 (If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out, and I must say the staff at wolfsssl were very helpful, knowldgeable and professional)
 
-### The Code
+### 6. The Code
 
 #### [BatteryMonitor](/BatteryMonitor)
 This program is built from the following files 
@@ -107,6 +107,11 @@ the "Solar Controller" table on page 3 of the "Extra Manufacturer Data" document
 
 ##### ZZ.h/ZZ.cpp
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
+
+#### Libraries
+Two libraries are used when compiling this program, the BLE library (Bluetooth Low Energy) and wolfSSL.
+The BLE library is built into the Arduino IDE these days (I'm using V2.3.6) 
+The wolfSSL library must be added using the library manager of the IDE.
 
 
 ----------------------------- / the end / ---------------------------
