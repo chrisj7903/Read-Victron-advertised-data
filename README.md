@@ -110,6 +110,6 @@ This pair provide miscellaneous general/global variables or functions, simply to
 
 #### 6.3 Libraries
 Two libraries are used when compiling this program, the BLE library for Bluetooth Low Energy functionality and wolfssl for the AES-CTR decryption algorithms.
-The BLE library is built into the Arduino IDE these days (I'm using V2.3.6) 
+The BLE library is built into the Arduino IDE these days (I'm using IDE V2.3.6) 
 The wolfssl library must be added using the library manager of the IDE, jsut seach for wolfssl, check it's from wolfSSL Inc then install.
 ----------------------------- / the end / ---------------------------
