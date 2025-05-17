@@ -125,6 +125,19 @@ The wolfssl library must be added using the library manager of the IDE, just sea
 Before compiling select "ESP32 Dev Module" in the IDE pull-down for target board selection.
 
 ### 7. Run-time Output
+Using a 4ohm dummy load and a pair of 12V batteries (rather worn out) wired to put 24V across the load including my Smartshunt. 
+This should produce for a current of approximately 24/4 = 6A (but dependent on the voltage drop seen whenever the current increases).
 
+Following are 4 screen snippets taken within a few moments of each other, during the test described above:
+- Serial Monitor output from BatteryMonitor running on ESP32
+<img src="images/BM_output_5.6A.jpg" width="150" height="300">
 
+- Screenshot from 'VictronConnect' app on my mobile
+<img src="images/VC_screenshot_2.png" width="150" height="300">
+
+- Screenshot #1 from the 'nRF Connect' app on my mobile 
+<img src="images/nRF_screenshot_SS_2.png" width="150" height="300"> 
+
+- Screenshot #2 from the 'nRF Connect' app on my mobile, RAW mode
+<img src="images/nRF_screenshot_SS_RAW_2.png" width="150" height="300">
 ----------------------------- / the end / ---------------------------
