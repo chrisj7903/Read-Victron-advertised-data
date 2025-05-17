@@ -124,7 +124,7 @@ The wolfssl library must be added using the library manager of the IDE, just sea
 
 Before compiling select "ESP32 Dev Module" in the IDE pull-down for target board selection.
 
-### 7. Run-time Output
+### 7. Run-Time Outputs
 
 The following test uses the BatteryMonitor program. 
 
