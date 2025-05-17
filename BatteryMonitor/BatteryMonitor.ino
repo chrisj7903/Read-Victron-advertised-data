@@ -1,7 +1,7 @@
 /* ===== Battery Monitor ===== 
 
 Retrieves, decrypts, disassembles and reports the Bluetooth 'advertised data' from 
-one of my Victron Battery Monitor's: BATTbank_SmartShunt, P#1, P#2, P#3 (BMV-712)
+a Victron Battery Monitor e.g: SmartShunt, BMV-712
 
 The 'advertised data' is encrypted and embedded as the "Extra Manufacturer Data" that 
 is repeatedly transmitted over Bluetooth Low Energy (BLE) and can be seen/read without 
