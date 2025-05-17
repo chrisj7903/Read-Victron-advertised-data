@@ -65,7 +65,7 @@ The data for decryption is the 15 encrypted bytes (or 12 for a Solar Controller)
 
 The output of the decryption phase is another 16 byte array containing the actual unencrypted data.
 
-(If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out, and I must say the staff at wolfsssl were very helpful, knowldgeable and professional)
+(If you have questions regarding the wolfssl library they have a bunch of user forums at https://www.wolfssl.com/forums/ where you can ask. That is where I posted when I was trying to figure the decryption out. I must say the staff at wolfssl were very professional, knowledgable and helpful).
 
 ### 6. The Code
 
