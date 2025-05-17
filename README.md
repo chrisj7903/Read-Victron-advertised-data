@@ -129,10 +129,10 @@ Using a 4ohm dummy load and a pair of 12V batteries (rather worn out) wired to p
 This should produce for a current of approximately 24/4 = 6A (depending on the voltage drop as the current increases).
 
 Following are 5 screen snippets taken within a few moments of each other, during the test described above:
-- Serial Monitor output from BatteryMonitor running on ESP32
+- Adruino IDE Serial Monitor output as BatteryMonitor is 'booted up' on ESP32:
 <img src="images/BM_output_5.6A.jpg" width="150" height="300">
 
-- Serial Monitor VERBOSE mode output (type "V" to toggle)
+- Serial Monitor VERBOSE mode output (I entered "V" to toggle ON)
 <img src="images/BM_output_5_6A_VERBOSE.JPG" width="250" height="300">
 
 - Screenshot from 'VictronConnect' app on my mobile
