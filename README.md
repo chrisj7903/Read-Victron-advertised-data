@@ -40,7 +40,7 @@ The two text files following provide a detailed breakdown of example data advert
 - [Ad Data Structure - Solar Controller](docs/Ad%20Data%20Structure%20-%20Solar%20Controller.txt)
 
 ### 5. Decryption
-In the attachments above the Battery Monitor provided 15 bytes of encyprted data (whereas the Solar Controller provides only 12 bytes). We now need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
+In the attachments above the Battery Monitor provided 15 bytes of encrypted data (whereas the Solar Controller provides only 12 bytes). We now need to decrypt those 15 HEX bytes to reveal the 15 bytes of actual data they contain.
 
 As explained in "Extra Manufacturer Data" document, Victron use the AES Counter mode (AES-CTR) protocol to encypt the data. AES-CTR is a [Block Cipher Mode of Operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CTR) that turns a block cipher into a stream cipher.
 
