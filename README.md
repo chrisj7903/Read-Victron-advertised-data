@@ -107,7 +107,15 @@ the "Solar Controller" table on page 3 of the "Extra Manufacturer Data" document
 ##### ZZ.h/ZZ.cpp
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
 
-#### 6.3 Libraries & Compiling
+#### 6.3 Before Compiling
+Before compiling you must edit the code to initialise the following information specific to your Victron device:
+- <device_name>
+- <device_address>
+- <encryption_key>
+
+See the detailed explanation in the introduction text of the main .ino file.
+
+#### 6.4 Libraries & Compiling
 Two libraries are used when compiling this program, the BLE library for Bluetooth Low Energy functionality and wolfssl for the AES-CTR decryption algorithms.
 
 The BLE library is built into the Arduino IDE these days (I'm using IDE V2.3.6) 
@@ -115,5 +123,8 @@ The BLE library is built into the Arduino IDE these days (I'm using IDE V2.3.6)
 The wolfssl library must be added using the library manager of the IDE, just seach for wolfssl, check it's from wolfSSL Inc then install.
 
 Before compiling select "ESP32 Dev Module" in the IDE pull-down for target board selection.
+
+### 7. Run-time Output
+
 
 ----------------------------- / the end / ---------------------------
