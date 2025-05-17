@@ -90,7 +90,6 @@ One Victron design choice added much complication: the data is encoded "little e
 ##### ZZ.h/ZZ.cpp
 This pair provide miscellaneous general/global variables or functions, simply to keep the main body clean.  
 
-  
 #### 6.2 [SolarController](/SolarController) 
 This program is built from the following files 
 
@@ -113,6 +112,6 @@ Two libraries are used when compiling this program, the BLE library for Bluetoot
 
 The BLE library is built into the Arduino IDE these days (I'm using IDE V2.3.6) 
 
-The wolfssl library must be added using the library manager of the IDE, jsut seach for wolfssl, check it's from wolfSSL Inc then install.
+The wolfssl library must be added using the library manager of the IDE, just seach for wolfssl, check it's from wolfSSL Inc then install.
 
 ----------------------------- / the end / ---------------------------
