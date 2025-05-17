@@ -132,7 +132,7 @@ Following are 5 screen snippets taken within a few moments of each other, during
 <img src="images/BM_output_5.6A.jpg" width="150" height="300">
 
 - Serial Monitor VERBOSE mode output (type "V" to toggle)
-<img src="images/BM_output_5_6A_VERBOSE.jpg" width="150" height="300">
+<img src="images/BM_output_5_6A_VERBOSE.JPG" width="250" height="300">
 
 - Screenshot from 'VictronConnect' app on my mobile
 <img src="images/VC_screenshot_2.png" width="150" height="300">
