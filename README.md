@@ -56,6 +56,9 @@ To perform a decryption three user inputs are required:
 All three must be 16 bytes in length when input to the wolfssl decryption algorithm, padded with zeros if needs be.
 
 The Encryption Key is a sequence of 16 bytes unique to each Victron device. It can be found in the Settings using the VC app on each device.
+In the App: go to Settings (cog) -> 3 dots (top right) -> Product-Info -> scroll down > encryption key
+
+** BEWARE ** if you copy the key by hand there is a flaw in the VC App where only 31 of the 32 HEX characters defining the key may be visible. The safer option is to use the copy / select all dialogue that pops up if you tap on the key, then share. 
 
 An IV is included in every Bluetooth transmission, and it is incremented before (almost) every transmission. It is transmitted unencrypted and arrives as the first pair of bytes in Part 3 of each transmission. Note that the received IV has already been used as an input to the encryption process in the source Victron device, just before Bluetooth transmission. Consequently each decryption must use the specific IV that was transmitted with the encrypted data.
 
