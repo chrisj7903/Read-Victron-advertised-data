@@ -20,8 +20,8 @@ byte     iv[blkSize];   // initialisation vector
 byte cipher[blkSize];   // encrypted data
 byte output[blkSize];   // decrypted result
 
-// replace with actual key values
-byte key_SC[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; // My_Solar_Controller
+// replace with actual key values (NB: use lower case)
+byte key_SC[] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff}; // My_Solar_Controller
 
 // fwd decs
 //id decryptAesCtr(bool VERBOSE);
@@ -53,14 +53,12 @@ void AdDataCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
     for (int i = 0; i < len; i++) BIGarray[i] = advertisedDevice.getManufacturerData()[i];
   }
 }
-
 // --------------------------------------------------------------------------------
-
 // encryption routine not required here (covered in AES_CTR_enc_dec.ino)
-
 // decrypt cipher -> outputs  
 void decryptAesCtr(bool VERBOSE){
-  loadKey();  
+  memcpy(encKey,key_SC,sizeof(key_SC));       // key_SC -> encKey[]  
+  //loadKey();                                // replaced by line above. enable loadKey() for multiple SC                        
   iv[0] = BIGarray[7];                        // copy LSB into iv
   iv[1] = BIGarray[8];                        // copy MSB into iv
   memcpy(cipher, BIGarray + 10, 16);          // BIGarray[11:26] -> cipher[1:16]
@@ -77,17 +75,19 @@ void decryptAesCtr(bool VERBOSE){
   wc_AesFree(&aesDec);    // free up resources
 }
 
+/* Activate for use on multiple controllers
 void loadKey(){
-  if      (VICTRON_NAME == "My_Solar_Controller") memcpy(encKey,key_SC,sizeof(key_SC));   // key_SS -> encKey[]
-  //else if (VICTRON_NAME == "My_SmartShunt_1") memcpy(encKey,key_SS,sizeof(key_SS));   // key_SS -> encKey[]
-  //else if (VICTRON_NAME == "My_BMV712_P1")    memcpy(encKey,key_P1,sizeof(key_P1));   // key_P1 -> encKey[]
-  //else if (VICTRON_NAME == "My_BMV712_P2")    memcpy(encKey,key_P2,sizeof(key_P2));   // key_P2 -> encKey[]
-  //else if (VICTRON_NAME == "My_BMV712_P3")    memcpy(encKey,key_P3,sizeof(key_P3));   // key_P3 -> encKey[]
+  if      (VICTRON_NAME == "My_Solar_Controller") memcpy(encKey,key_SC,sizeof(key_SC));   // key_SC -> encKey[]
+  else if (VICTRON_NAME == "My_SmartShunt_1")     memcpy(encKey,key_SS,sizeof(key_SS));   // key_SS -> encKey[]
+  else if (VICTRON_NAME == "My_BMV712_P1")        memcpy(encKey,key_P1,sizeof(key_P1));   // key_P1 -> encKey[]
+  else if (VICTRON_NAME == "My_BMV712_P2")        memcpy(encKey,key_P2,sizeof(key_P2));   // key_P2 -> encKey[]
+  else if (VICTRON_NAME == "My_BMV712_P3")        memcpy(encKey,key_P3,sizeof(key_P3));   // key_P3 -> encKey[]
   else {
     Serial << "\n\n *** Program HALTED: encryption key not set!\n";
     while(1);
   }
 }
+*/
 
 bool na_batV = false;
 bool na_batA = false;
