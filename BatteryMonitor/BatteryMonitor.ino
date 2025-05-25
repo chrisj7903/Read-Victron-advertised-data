@@ -24,6 +24,8 @@ Settings (cog) >  3 dots (top right) > Product-Info > scroll down > encryption k
 The target device must be nominated in VBM.h as follows: 
 #define VICTRON_ADDRESS <device_address>
 #define VICTRON_NAME    <device_name>
+If you are using this code for several monitors, you can enable the loadKey() function to 
+load the required encryption key by adding the <device_name> for each monitor into loadKey().
 
 The <encryption key> unique to the device must be declared as the 16 byte array key_BM[] in VBM.cpp
 ---------------------------------------------------------------------------------------------------
