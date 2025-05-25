@@ -19,10 +19,10 @@ byte     iv[blkSize] = {0};   // initialisation vector
 byte cipher[blkSize] = {0};   // encrypted data
 byte output[blkSize] = {0};   // decrypted result
 
-// replace with actual key values
-byte key_SS[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; // My_Smartshunt_1
-byte key_S2[] = {0x96,0x52,0x4c,0xc1,0x1d,0x95,0x1b,0x63,0x79,0x6d,0x05,0xa9,0xac,0xce,0x73,0x18}; // My_Smartshunt_2
-byte key_P1[] = {0x21,0x4e,0x63,0x51,0x1c,0xa9,0xff,0x90,0xdb,0xf9,0xce,0x3d,0xf0,0x53,0x15,0x28}; // My_BMV712_P1
+// replace with actual key values (in lower case)
+byte key_SS[] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff}; // My_Smartshunt_1
+//te key_S2[] = {0x96,0x52,0x4c,0xc1,0x1d,0x95,0x1b,0x63,0x79,0x6d,0x05,0xa9,0xac,0xce,0x73,0x18}; // My_Smartshunt_2
+//te key_P1[] = {0x21,0x4e,0x63,0x51,0x1c,0xa9,0xff,0x90,0xdb,0xf9,0xce,0x3d,0xf0,0x53,0x15,0x28}; // My_BMV712_P1
 
 // --- forward declarations ---
 void loadKey();
@@ -59,7 +59,8 @@ void AdDataCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
 // --------------------------------------------------------------------------------
 // decrypt cipher -> outputs  
 void decryptAesCtr(bool VERBOSE){
-  loadKey();  
+  memcpy(encKey,key_SS,sizeof(key_SS));       // key_SS -> encKey[]
+  //loadKey();                                // replaced by line above. enable loadKey() for multiple BM 
   iv[0] = BIGarray[7];                        // copy LSB into iv
   iv[1] = BIGarray[8];                        // copy MSB into iv
   memcpy(cipher, BIGarray + 10, 16);          // BIGarray[11:26] -> cipher[1:16]
@@ -76,6 +77,7 @@ void decryptAesCtr(bool VERBOSE){
   wc_AesFree(&aesDec);    // free up resources
 }
 
+/*
 void loadKey(){
   if      (VICTRON_NAME == "My_SmartShunt_1") memcpy(encKey,key_SS,sizeof(key_SS));   // key_SS -> encKey[]
   else if (VICTRON_NAME == "My_SmartShunt_2") memcpy(encKey,key_SS,sizeof(key_S2));   // key_S2 -> encKey[]
@@ -85,6 +87,7 @@ void loadKey(){
     while(1);
   }
 }
+*/
 
 // =====================================================================================
 
