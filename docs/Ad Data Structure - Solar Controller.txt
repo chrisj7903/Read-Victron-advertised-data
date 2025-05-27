@@ -26,8 +26,8 @@ FF type: 0xFF (the following 22 bytes are Vendor specific)
 E102 Company identifier 0x02E1 (little endian) = "Victron Energy BV" (see Bluetooth Assigned Numbers p.234)
 
 10   Manufacturer Data Record Type (always (0x10)
-0276 Model Id for MPPT 100/30 Solar Controller
-A0   "read out type" not always 0xA3 (JB ref A shows 0xA0)
+02   State (0x02 connectable, 0x82 not connectable)
+76A0 Model Id for MPPT 100/30 Solar Controller = 0xA076 (see https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.34.pdf)
 01   Record Type: 0x01 = Solar Charger (ref B)
 
 the data above remains constant, whereas
