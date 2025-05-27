@@ -25,8 +25,8 @@ part 2 (1+8 bytes)
 FF type: 0xFF (indicates the following 25 bytes are Vendor specific)
 E102 provides the company identifier (little endian) = 0x02E1  = "Victron Energy BV" (see Bluetooth Assigned Numbers p.234)
 10   Manufacturer Data Record Type (always (0x10)
-0281 Model Id for BMV-712 Battery Monitor
-A3   "read out type" not always 0xA3 (JB ref A shows 0xA0)
+02   Connectabillity and state (0x02 connectable, 0x82 not connectable)
+81A3 Model Id for BMV-712 Battery Monitor = 0xA381 (see https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.34.pdf)
 02   Record Type: 0x02 = Battery Monitor (ref B)
 
 all the data above remains constant across transmissions, whereas
