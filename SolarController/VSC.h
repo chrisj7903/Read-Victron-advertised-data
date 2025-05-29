@@ -4,7 +4,7 @@
 #include "BLEDevice.h"
 
 // replace with actual Name and Address
-#define VICTRON_ADDRESS "FF:FF:FF:FF:FF:FF"     // Solar Controller address
+#define VICTRON_ADDRESS "ff:ff:ff:ff:ff:ff"     // Solar Controller address (lower case)
 #define VICTRON_NAME    "My_Solar_Controller"
 
 extern BLEScan *pBLEScan; // = BLEDevice::getScan();
