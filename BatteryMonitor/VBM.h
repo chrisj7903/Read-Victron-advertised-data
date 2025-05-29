@@ -5,7 +5,7 @@
 
 
 // replace with actual Name and Address
-#define VICTRON_ADDRESS "FF:FF:FF:FF:FF:FF"     // Smartshunt address
+#define VICTRON_ADDRESS "ff:ff:ff:ff:ff:ff"     // Smartshunt address (lower case)
 #define VICTRON_NAME "My_SmartShunt_1"
 
 extern BLEScan *pBLEScan; // = BLEDevice::getScan();
