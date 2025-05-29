@@ -116,7 +116,7 @@ Before compiling you must edit the code to initialize the following information 
 - `<device_address>`
 - `<encryption_key>`
 
-NB: <device_address> and <encryption key> must be lower case.
+NB: <device_address> and <encryption_key> must be lower case.
 
 See the detailed explanation in the introduction text of the main `.ino` file.
 
