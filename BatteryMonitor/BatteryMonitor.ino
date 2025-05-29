@@ -28,6 +28,9 @@ If you are using this code for several monitors, you can enable the loadKey() fu
 load the required encryption key by adding the <device_name> for each monitor into loadKey().
 
 The <encryption key> unique to the device must be declared as the 16 byte array key_BM[] in VBM.cpp
+
+NB: <device_address> and <encryption_key> must be lower case. 
+
 ---------------------------------------------------------------------------------------------------
 Once the progam is running entering "V" at the Serial Monitor toggles VERBOSE mode between more/less detailed status/info
 */
