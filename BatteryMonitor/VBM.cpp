@@ -50,9 +50,12 @@ int scan_secs = 2;
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
 void AdDataCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
   if (advertisedDevice.getAddress().toString() == VICTRON_ADDRESS){ // select target device
-    BLEDevice::getScan()->stop();
-    int len = advertisedDevice.getManufacturerData().length();
-    for (int i = 0; i < len; i++) BIGarray[i] = advertisedDevice.getManufacturerData()[i];
+    String manufData = advertisedDevice.getManufacturerData();
+    unsigned int len = manufData.length();
+    if (len >= 11 && manufData[0] == 0xE1 && manufData[1] == 0x02 && manufData[2] == 0x10) {
+      manufData.getBytes(BIGarray, std::min(len, sizeof(BIGarray)));
+      BLEDevice::getScan()->stop();
+    }
   }
 }
 
