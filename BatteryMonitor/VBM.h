@@ -7,7 +7,7 @@
 #define VICTRON_ADDRESS "ff:ff:ff:ff:ff:ff"     // Smartshunt address (lower case)
 #define VICTRON_NAME "My_SmartShunt_1"
 
-// Nominate Aucilliary mode 
+// Nominate the expected Aucilliary mode 
 //efine EXPECTED_AUX_MODE 0     // on Auxilliary input, monitor aux voltage 
 #define EXPECTED_AUX_MODE 1     // on Auxilliary input, monitor mid voltage 
 //efine EXPECTED_AUX_MODE 2     // on Auxilliary input, monitor Kelvin temperature
@@ -16,8 +16,8 @@
 // Set upper & lower threshholds for detecting dud readings 
 #define BATTV_MIN   20    // volts
 #define BATTV_MAX   34    // volts
-#define  AVAL_MIN   10    // volts
-#define  AVAL_MAX   17    // volts
+#define  AVAL_MIN   10    // volts or Kelvin, depending on aux setting
+#define  AVAL_MAX   17    // <ditto>
 #define BATTA_MIN -200    // amps
 #define BATTA_MAX  200    // amps
 #define    AH_MAX 1000    // amp-hours
