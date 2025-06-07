@@ -3,11 +3,26 @@
 // -----------------------------------------------------------------
 #include "BLEDevice.h"
 
-
 // replace with actual Name and Address
 #define VICTRON_ADDRESS "ff:ff:ff:ff:ff:ff"     // Smartshunt address (lower case)
 #define VICTRON_NAME "My_SmartShunt_1"
 
+// Nominate Aucilliary mode 
+//efine EXPECTED_AUX_MODE 0     // on Auxilliary input, monitor aux voltage 
+#define EXPECTED_AUX_MODE 1     // on Auxilliary input, monitor mid voltage 
+//efine EXPECTED_AUX_MODE 2     // on Auxilliary input, monitor Kelvin temperature
+//efine EXPECTED_AUX_MODE 3     // do not monitor Auxilliary input
+
+// Set upper & lower threshholds for detecting dud readings 
+#define BATTV_MIN   20    // volts
+#define BATTV_MAX   34    // volts
+#define  AVAL_MIN   10    // volts
+#define  AVAL_MAX   17    // volts
+#define BATTA_MIN -200    // amps
+#define BATTA_MAX  200    // amps
+#define    AH_MAX 1000    // amp-hours
+#define   SOC_MIN   10    // %
+#define   SOC_MAX  100    // %
 extern BLEScan *pBLEScan; // = BLEDevice::getScan();
 extern int scan_secs;
 
@@ -29,6 +44,8 @@ const word32 blkSize = AES_BLOCK_SIZE * 1;
 extern byte inputs[blkSize]; 
 extern byte cipher[blkSize]; 
 extern byte output[blkSize]; 
+
+extern bool mfrDataReceived;
 
 extern int aux;
 extern void  reportBMvalues();

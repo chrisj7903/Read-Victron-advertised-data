@@ -4,7 +4,6 @@
 
 #include "ZZ.h"
 #include "VBM.h"
-#include <bitset>
 
 #if defined(NO_AES) or !defined(WOLFSSL_AES_COUNTER) or !defined(WOLFSSL_AES_128)
 #error "Missing AES, WOLFSSL_AES_COUNTER or WOLFSSL_AES_128"
@@ -18,6 +17,8 @@ byte   encKey[16]    = {0};   // for nominated encryption key
 byte     iv[blkSize] = {0};   // initialisation vector 
 byte cipher[blkSize] = {0};   // encrypted data
 byte output[blkSize] = {0};   // decrypted result
+
+bool mfrDataReceived = false;
 
 // replace with actual key values (in lower case)
 byte key_SS[] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff}; // My_Smartshunt_1
@@ -44,20 +45,22 @@ void printBins();
 
 BLEScan *pBLEScan = BLEDevice::getScan();
 
-int scan_secs = 2;
-
 // --------------------------------------------------------------------------------
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
-void AdDataCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
-  if (advertisedDevice.getAddress().toString() == VICTRON_ADDRESS){ // select target device
-    String manufData = advertisedDevice.getManufacturerData();
-    unsigned int len = manufData.length();
-    if (len >= 11 && manufData[0] == 0xE1 && manufData[1] == 0x02 && manufData[2] == 0x10) {
-      manufData.getBytes(BIGarray, std::min(len, sizeof(BIGarray)));
-      BLEDevice::getScan()->stop();
+void AdDataCallback::onResult(BLEAdvertisedDevice advertiser) {
+  if (!mfrDataReceived){
+    if (advertiser.getAddress().toString() == VICTRON_ADDRESS){         // select a specific advertising device
+      unsigned int len = advertiser.getManufacturerData().length();
+      if (len >= 11 && advertiser.getManufacturerData()[0] == 0xE1      // second byte of Victron company identifier 0x02E1 (little endian)
+                    && advertiser.getManufacturerData()[1] == 0x02      // first byte
+                    && advertiser.getManufacturerData()[2] == 0x10) {   // indicates manufacturer data follows next
+        BLEDevice::getScan()->stop();                                         // stop this scan
+        for (int i = 0; i < min(len,sizeof(BIGarray)); i++) BIGarray[i] = advertiser.getManufacturerData()[i];
+        mfrDataReceived = true;
+        }
+      }
     }
   }
-}
 
 // --------------------------------------------------------------------------------
 // decrypt cipher -> outputs  
@@ -69,9 +72,9 @@ void decryptAesCtr(bool VERBOSE){
   memcpy(cipher, BIGarray + 10, 16);          // BIGarray[11:26] -> cipher[1:16]
   memset(&aesDec,0,sizeof(Aes));              // Init stack variables
   if (VERBOSE) {
-    Serial << "key   : "; printByteArray(encKey); Serial << '\n';
-    Serial << "salt  : "; printByteArray(iv);     Serial << '\n';
-    Serial << "cipher: "; printByteArray(cipher); Serial << '\n';
+    Serial << F("key   : "); printByteArray(encKey); Serial << '\n';
+    Serial << F("salt  : "); printByteArray(iv);     Serial << '\n';
+    Serial << F("cipher: "); printByteArray(cipher); Serial << '\n';
     } 
   wc_AesInit      (&aesDec, NULL, INVALID_DEVID);                         // init aesDec 
   wc_AesSetKey    (&aesDec, encKey, blkSize, iv, AES_ENCRYPTION);         // load dec key 
@@ -100,6 +103,8 @@ bool na_aux  = false;
 bool na_batA = false;
 bool na_Ah   = false;
 bool na_soc  = false;
+
+int dudvals = 0, maxduds = 0;
 
 /* ------------------------------------------------------------------------
 Report Battery Monitor values
@@ -164,33 +169,51 @@ byte 14 bits 6,7 unused
 byte 15 bits 0-7 unused
 ------------------------------------------------------------------------ */
 void reportBMvalues(){
-  inf_TTG = false;
-  float ttgDays = parseTimeToGo();            //       0 -> 65535 mins (45.51 days)
-  float battV   = parseBattVolts();           // -327.68 -> 327.66 V
+  if (FILTERING) maxduds = 0; else maxduds = 10;              // if FILTERING this will silence dud reporting
+  float ttgDays = parseTimeToGo();                            //       0 -> 65535 mins (45.51 days)
+  float battV   = parseBattVolts();                           // -327.68 -> 327.66 V
   uint32_t alarmBits = (static_cast<uint32_t>(output[5]) << 8) | output[4];
-  int   aux   = output[8] & 0x03;           // 0:Aux 1: Mid 2: Kelvin 3: none
+  int   aux = output[8] & 0x03;                               // 0:Aux 1: Mid 2: Kelvin 3: none
   float Aval = 0;          
-  if      (aux == 0) Aval = parseAuxVolts();  // -327.68 -> 327.66 V;}
-  else if (aux == 1) Aval = parseMidVolts();  //       0 -> 655.34 V
-  else if (aux == 2) Aval = parseAuxKelvin(); //       0 -> 655.34 K (-273.15 -> 382.19 C)
+  if      (aux == 0) Aval = parseAuxVolts();                  // -327.68 -> 327.66 V;}
+  else if (aux == 1) Aval = parseMidVolts();                  //       0 -> 655.34 V
+  else if (aux == 2) Aval = parseAuxKelvin();                 //       0 -> 655.34 K (-273.15 -> 382.19 C)
   else if (aux == 3) Aval = 999.99;
-  float   battA = parseBattAmps();            // -2097.152 -> 2097.150 A 
-  float   Ah    = parseAmpHours();            // 0 -> 104,857.4 Ah
-  float   SoC   = parseStateOfCharge();       // 0 -> 100%
-  // -- in-line reporting -----------------------------------------------------
-  //Serial << '\t';
-  if (inf_TTG) Serial << "inf_"; else Serial << _FLOAT(ttgDays,1); Serial << "d ";
-  if (na_batV) Serial << "n/a-"; else Serial << _FLOAT(battV  ,2); Serial << "V ";
-  Serial << reportAlarms(alarmBits) << " ";
-  if (na_aux) Serial << "n/a-"; else Serial << _FLOAT(Aval,2);
-  if      (aux == 0 || aux == 1) Serial << "V";
-  else if (aux == 2)             Serial << "K";
-  else                           Serial << "X";
-  Serial << "| ";
-  Serial << aux << " ";
-  if (na_batA) Serial << "n/a-"; else Serial << _FLOAT(battA,3); Serial << "A ";
-  if (na_Ah)   Serial << "n/a-"; else Serial << _FLOAT(Ah   ,1); Serial << "Ah ";
-  if (na_soc)  Serial << "n/a-"; else Serial << _FLOAT(SoC  ,1); Serial << "%\n";
+  float   battA = parseBattAmps();                            // -2097.152 -> 2097.150 A 
+  float   Ah    = parseAmpHours();                            // 0 -> 104,857.4 Ah
+  float   SoC   = parseStateOfCharge();                       // 0 -> 100%
+  // -- flag (& optionally filter) any dud readings ---------------------------------------
+  if (aux  != EXPECTED_AUX_MODE)                            dudvals++;
+  if (!na_batV && (battV < BATTV_MIN || battV > BATTV_MAX)) dudvals++;
+  if (!na_aux  && (Aval  <  AVAL_MIN || Aval  >  AVAL_MAX)) dudvals++;
+  if (!na_batA && (battA < BATTA_MIN || battA > BATTA_MAX)) dudvals++;
+  if (!na_soc  && (SoC   <   SOC_MIN || SoC > SOC_MAX    )) dudvals++;
+  if (!na_Ah   && (Ah    >    AH_MAX))                      dudvals++;
+  // -- in-line reporting -----------------------------------------------------------------
+  if (!VERBOSE && dudvals) Serial << " *"; // flag if this reading contains one or more dud values
+  if (dudvals <= maxduds){
+    if (!VERBOSE) Serial << '\t'; else Serial << " ";
+    if (inf_TTG) Serial << "inf_"; else Serial << _WIDTH(_FLOAT(ttgDays,1),4); Serial << "d ";
+    if (na_batV) Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(battV  ,2),5); Serial << "V ";
+    Serial << reportAlarms(alarmBits) << " ";
+    if (na_aux) Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(Aval,2),6);
+    if      (aux == 0 || aux == 1) Serial << "V";
+    else if (aux == 2)             Serial << "K";
+    else                           Serial << "X";
+    Serial << " |  " << aux << "  ";
+    if (na_batA) Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(battA,1),5); Serial << "A ";
+    if (na_Ah)   Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(Ah   ,1),7); Serial << "Ah ";
+    if (na_soc)  Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(SoC  ,1),5); Serial << "%";
+  }
+  if (dudvals) Serial << "\t[duds: " << dudvals << "]";
+  // --------------------------------------------------------------------------------------
+  dudvals = 0;  
+  inf_TTG = false;
+  na_batV = false;
+  na_aux  = false;
+  na_batA = false;
+  na_Ah   = false;
+  na_soc  = false;
 }
 
 // Some of the routines below use static_cast to convert integers  
@@ -198,7 +221,7 @@ void reportBMvalues(){
 
 // Remaining Battery 'Time to Go' in minutes
 float parseTimeToGo(){
-  uint16_t TTG_mins = (output[1] << 8) + output[0];  // NB little endian: byte[1] <-> byte[0]
+  uint16_t TTG_mins = (output[1] << 8) | output[0];  // NB little endian: byte[1] <-> byte[0]
   if (TTG_mins == 0xFFFF) inf_TTG = true;
   return (static_cast<float>(TTG_mins)/60/24);   // integer units minutes converted to hours as float
 }
@@ -206,7 +229,7 @@ float parseTimeToGo(){
 // Note: SC & BM use same bytes (2,3) for battery volts
 float parseBattVolts(){
   bool    neg       =  (output[3] & 0x80) >> 7;              // extract sign bit for signed int
-  int32_t batt_mV10 = ((output[3] & 0x7F) << 8) + output[2];  // exclude sign bit from byte 3
+  int32_t batt_mV10 = ((output[3] & 0x7F) << 8) | output[2];  // exclude sign bit from byte 3
   if (batt_mV10 == 0x7FFF) na_batV = true;                       
   if (neg) batt_mV10 = batt_mV10 - 32768;       // 2's complement = val - 2^(b-1) b = bit# = 16
   return (static_cast<float>(batt_mV10)/100);   // integer units 10mV converted to V as float
@@ -221,7 +244,7 @@ aux = 3 means result is 'N/A' or 'off' */
 // only called when aux = 0
 float parseAuxVolts(){
   bool    neg      =  (output[7] & 0x80) >> 7;               // extract sign bit
-  int32_t aux_mV10 = ((output[7] & 0x7F) << 8) + output[6]; // exclude sign bit from byte[7]
+  int32_t aux_mV10 = ((output[7] & 0x7F) << 8) | output[6]; // exclude sign bit from byte[7]
   if (aux_mV10 == 0x7FFF) na_aux = true;                       
   if (neg) aux_mV10 = aux_mV10 - 32768;         // 2's complement = val - 2^(b-1) b = bit# = 16
   return (static_cast<float>(aux_mV10)/100);   // integer units 10mV converted to V as float
@@ -229,21 +252,21 @@ float parseAuxVolts(){
 
 // only called when aux = 1
 float parseMidVolts(){
-  int32_t aux_mV10 = (output[7] << 8) + output[6];
+  int32_t aux_mV10 = (output[7] << 8) | output[6];
   if (aux_mV10 == 0xFFFF) na_aux = true;                       
   return (static_cast<float>(aux_mV10)/100);   // integer units 10mV converted to V, as float
 }
 
 // only called when aux = 2
 float parseAuxKelvin(){
-  int32_t aux_mK10 = (output[7] << 8) + output[6];
+  int32_t aux_mK10 = (output[7] << 8) | output[6];
   if  (aux_mK10 == 0xFFFF) na_aux = true;
   return (static_cast<float>(aux_mK10)/100);    // integer units 10 milli-Kelvin, converted to Kelvin, as float
 }
 
 /*
 float parseAuxCelsius(){
-  int32_t aux_mK10 = (output[7] << 8) + output[6];
+  int32_t aux_mK10 = (output[7] << 8) | output[6];
   int32_t aux_mC10;
   if  (aux_mK10 == 0xFFFF) na_aux = true;
   else aux_mC10 = aux_mK10 - 27315;             // Celius = Kelvin - 273.15        
@@ -255,8 +278,8 @@ float parseAuxCelsius(){
 // Battery Current (signed) 22 bits = sign bit + 21 bits
 float parseBattAmps(){
   bool    neg =  (output[10] & 0x80) >> 7;                                        // bit  21
-  int32_t mA  = ((output[8]  & 0xFC) >> 2) + ((output[9]  & 0x03) << 6)       + // bits  0 - 7 
-               (((output[9]  & 0xFC) >> 2) + ((output[10] & 0x03) << 6) << 8) + // bits  8 - 15
+  int32_t mA  = ((output[8]  & 0xFC) >> 2) + ((output[9]  & 0x03) << 6)       | // bits  0 - 7 
+               (((output[9]  & 0xFC) >> 2) + ((output[10] & 0x03) << 6) << 8) | // bits  8 - 15
                (((output[10] & 0x7C) >> 2)                                << 16); // bits 16 - 20
   if (mA == 0x1FFFFF) na_batA = true;
   if (neg) mA = mA - 2097152;                   // 2's complement = val - 2^(b-1) where b = bits = 22
@@ -265,8 +288,8 @@ float parseBattAmps(){
 
 // Amp Hours consumed 20 bits (unsigned) integer units 0.1Ah (100mAh). 
 float parseAmpHours(){
-  uint32_t mAh100 = output[11]       +            // bits  0 - 7 
-                   (output[12] << 8) +            // bits  8 - 15
+  uint32_t mAh100 = output[11]       |            // bits  0 - 7 
+                   (output[12] << 8) |            // bits  8 - 15
                   ((output[13] & 0x0F) << 16);    // bits 16 - 19
   if (mAh100 == 0xFFFFF) na_Ah = true;
   return (static_cast<float>(mAh100)/10);           // integer units 100mAh converted to Ah as float 
@@ -274,8 +297,8 @@ float parseAmpHours(){
 
 // State of charge 0-100% in units of 0.1%, as 10 bits (unsigned)  
 float parseStateOfCharge(){
-  uint16_t soc01 = ((output[13] & 0xF0) >> 4) +   // bits 0 - 3
-                   ((output[14] & 0x0F) << 4) +   // bits 4 - 7
+  uint16_t soc01 = ((output[13] & 0xF0) >> 4) |   // bits 0 - 3
+                   ((output[14] & 0x0F) << 4) |   // bits 4 - 7
                    ((output[14] & 0x30) << 4);    // bits 8 - 9
   if (soc01 == 0x3FF) na_soc = true;
   if (soc01  > 1000) soc01 = 9999;                  // flag error if > 100% = 1000/10 
@@ -294,7 +317,6 @@ float parseStateOfCharge(){
 char * reportAlarms(uint32_t alarmBits){
   char * alarmState = new char[5];                        // Gemini recommends new/delete to avoid memory leaks
   strcpy(alarmState, "none");
-  //uint32_t alarmBits = (output[5])+(output[4]);
   if (countBitsSet(alarmBits) == 1){
     if (alarmBits == 0x0001) strcpy(alarmState, "lo_V");
     if (alarmBits == 0x0002) strcpy(alarmState, "hi_V");
