@@ -31,16 +31,18 @@ The <encryption key> unique to the device must be declared as the 16 byte array 
 
 NB: <device_address> and <encryption_key> must be lower case. 
 
-If device is reporting see some dud readings, where the values reported are clearly wrong or corrupted, turn 
-FILTERING on to suppress dud readings. To temporarily enable filtering, enter F at the Serial Monitor while 
-the sketch is running. For permanent filtering set bool FILTERING = false in ZZ.cpp before compiling. This 
-relies on the user nominating appropriate threshholds in VSC.h for:
-  BATTV_MIN / MAX
-  BATTA_MIN / MAX
-  KWH_MAX
-  PVW_MAX
-  LOADA_MIN / MAX
-The current default thresholds are setup for a 24V system.
+If device is reporting some dud readings, where the values reported are clearly wrong or corrupted, you can 
+turn FILTERING on to suppress dud readings. To temporarily enable filtering, enter F at the Serial Monitor 
+while the sketch is running. For permanent filtering set bool FILTERING = false in ZZ.cpp before compiling.
+The filtering relies on the user nominating appropriate preferences/threshholds in VBM.h for:
+  EXPECTED_AUX_MODE (auxilliary input selection)
+  BATTV_MAX / MIN   (battery Volts)
+  BATTA_MAX / MIN   (battery Amps)
+  AVAL_ MAX / MIN   (Volts or Kelvin, depending on aux setting)
+  AH_MAX            (Amp-Hours of yield)
+  PVW_MAX           (Photo-Voltaic Watts - panel power )
+  SOC_MAX / MIN     (State of Charge)
+The current preferences/threshholds are setup for a 24V system.
 
 ---------------------------------------------------------------------------------------------------
 Once the progam is running entering "V" at the Serial Monitor toggles VERBOSE mode between more/less detailed status/info
