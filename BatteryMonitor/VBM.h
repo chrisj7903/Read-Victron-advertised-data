@@ -24,7 +24,6 @@
 #define   SOC_MIN   10    // %
 #define   SOC_MAX  100    // %
 extern BLEScan *pBLEScan; // = BLEDevice::getScan();
-extern int scan_secs;
 
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
 class AdDataCallback : public BLEAdvertisedDeviceCallbacks {

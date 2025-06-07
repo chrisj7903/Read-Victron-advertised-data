@@ -78,7 +78,7 @@ void loop(){
   loopCount++; 
   processSerialCommands();
   mfrDataReceived = false; 
-  pBLEScan->start(scan_secs, false);
+  pBLEScan->start(scan_max_secs, false);
   delay(scan_gap_ms);
   if (VERBOSE) Serial << '\n';
   printLoopCount();
@@ -99,7 +99,8 @@ void loop(){
     Serial << '\t';
     if (VERBOSE) Serial << F("** No device matching ") << VICTRON_ADDRESS << F(" found during last scan ** "); //(" << t2-t1 << ")";
     else         Serial << F("** Target device not found **");
-  } 
+  }
+  Serial << '\n';   
 }
 
 void displayHeadings(){
