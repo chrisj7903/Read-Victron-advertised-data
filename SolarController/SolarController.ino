@@ -71,7 +71,7 @@ void setup() {
   pBLEScan->setAdvertisedDeviceCallbacks(new AdDataCallback());
   pBLEScan->setActiveScan(true);            // uses more power, but get results faster
   Serial << F("* scan for devices every ") << scan_gap_ms << F(" ms (and up to ") << scan_max_secs << F(" secs/scan)\n");
-  Serial << CF(dashes) << F("setup done") << CF(dashes) << '\n';
+  Serial << CF(dashes) << F("setup done") << CF(dashes) << '\n' << '\n';
   displayHeadings();
 } 
 
