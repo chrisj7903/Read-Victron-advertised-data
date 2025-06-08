@@ -7,12 +7,21 @@
 #define VICTRON_ADDRESS "ff:ff:ff:ff:ff:ff"     // Solar Controller address (lower case)
 #define VICTRON_NAME    "My_Solar_Controller"
 
+// Set upper & lower threshholds for detecting dud readings 
+#define BATTV_MIN   20    // volts
+#define BATTV_MAX   34    // volts
+#define BATTA_MIN    0    // amps
+#define BATTA_MAX  200    // amps
+#define   KWH_MAX  500    // kilo watt hours
+#define   PVW_MAX 1000    // watts
+#define LOADA_MIN    0    // amps
+#define LOADA_MAX  200    // amps
+
 extern BLEScan *pBLEScan; // = BLEDevice::getScan();
-extern int scan_secs;
 
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
 class AdDataCallback : public BLEAdvertisedDeviceCallbacks {
-  void onResult(BLEAdvertisedDevice advertisedDevice);  
+  void onResult(BLEAdvertisedDevice advertiser);  
 };
 
 // -----------------------------------------------------------------
@@ -28,6 +37,8 @@ const word32 blkSize = AES_BLOCK_SIZE * 1;
 extern byte inputs[blkSize]; 
 extern byte cipher[blkSize]; 
 extern byte output[blkSize]; 
+
+extern bool mfrDataReceived;
 
 extern void reportSCvalues();
 extern float parseBattVolts();

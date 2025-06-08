@@ -4,8 +4,6 @@
 
 #include "ZZ.h"
 #include "VSC.h"
-#include <bitset>
-
 
 #if defined(NO_AES) or !defined(WOLFSSL_AES_COUNTER) or !defined(WOLFSSL_AES_128)
 #error "Missing AES, WOLFSSL_AES_COUNTER or WOLFSSL_AES_128"
@@ -20,6 +18,8 @@ byte     iv[blkSize];   // initialisation vector
 byte cipher[blkSize];   // encrypted data
 byte output[blkSize];   // decrypted result
 
+bool mfrDataReceived = false;
+
 // replace with actual key values (NB: use lower case)
 byte key_SC[] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff}; // My_Solar_Controller
 
@@ -28,7 +28,7 @@ byte key_SC[] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xf
 void loadKey();
 //id reportSCvalues();
 void reportDeviceState();
-void reportControllerError();
+void reportChargerError();
 float parseBattVolts();
 float parseBattAmps();
 float parseKWHtoday();
@@ -42,20 +42,23 @@ void printBins();
 // ----------------------------------------------------------------------
 BLEScan *pBLEScan = BLEDevice::getScan();
 
-int scan_secs = 2;
-
 // --------------------------------------------------------------------------------
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
-void AdDataCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
-  if (advertisedDevice.getAddress().toString() == VICTRON_ADDRESS){ // select target device
-    String manufData = advertisedDevice.getManufacturerData();
-    unsigned int len = manufData.length();
-    if (len >= 11 && manufData[0] == 0xE1 && manufData[1] == 0x02 && manufData[2] == 0x10) {
-      manufData.getBytes(BIGarray, std::min(len, sizeof(BIGarray)));
-      BLEDevice::getScan()->stop();
+void AdDataCallback::onResult(BLEAdvertisedDevice advertiser) {
+  if (!mfrDataReceived){
+    if (advertiser.getAddress().toString() == VICTRON_ADDRESS){         // select a specific advertising device
+      unsigned int len = advertiser.getManufacturerData().length();
+      if (len >= 11 && advertiser.getManufacturerData()[0] == 0xE1      // second byte of Victron company identifier 0x02E1 (little endian)
+                    && advertiser.getManufacturerData()[1] == 0x02      // first byte
+                    && advertiser.getManufacturerData()[2] == 0x10) {   // indicates manufacturer data follows next
+        BLEDevice::getScan()->stop();                                         // stop this scan
+        for (int i = 0; i < min(len,sizeof(BIGarray)); i++) BIGarray[i] = advertiser.getManufacturerData()[i];
+        mfrDataReceived = true;
+      }
     }
   }
 }
+
 // --------------------------------------------------------------------------------
 // encryption routine not required here (covered in AES_CTR_enc_dec.ino)
 // decrypt cipher -> outputs  
@@ -98,39 +101,64 @@ bool na_kWh  = false;
 bool na_pvW  = false;
 bool na_lodA = false;
 
+int dudvals = 0, maxduds = 0;           // count of dud values in one set of readings
+
 /* ------------------------------------------------------------------------
 Extract & decode bytes received and report current values. 
 NB: multiple bytes are little-endian (i.e order of double/triple bytes reversed)
 signed ints use 2's complement, so the first mask excises the sign bit */
 void reportSCvalues(){
+  if (FILTERING) maxduds = 0; else maxduds = 10;              // if FILTERING, silences dud reporting  
+  //if (TESTMODE) memcpy(output,testArray,16);                  // override output array with test values
   float battV = parseBattVolts();       // -327.68 -> 327.66 V
   float battA = parseBattAmps();        // -3276.8 -> 3276.6 A
   float kWh   = parseKWHtoday();        //       0 -> 655.34 kWh
   float PV_W  = parsePVpower();         //       0 -> 65534  W
-  float loadA = parseLoadAmps();         //       0 -> 51.0   A
+  float loadA = parseLoadAmps();        //       0 -> 51.0   A
   //Serial << '\t'; 
-  reportDeviceState();  Serial << " ";
-  reportControllerError(); Serial << " "; 
-  if (na_batV) Serial << "n/a-"; else Serial << _FLOAT(battV,2);  Serial << "V ";
-  if (na_batA) Serial << "n/a-"; else Serial << _FLOAT(battA,1);  Serial << "A| ";
-  if (na_kWh)  Serial << "n/a-"; else Serial << _FLOAT(kWh  ,2);  Serial << "kWh ";
-  if (na_pvW)  Serial << "n/a-"; else Serial << _FLOAT(PV_W ,0);  Serial << "W ";
-  if (na_lodA) Serial << "n/a-"; else Serial << _FLOAT(loadA,1);  Serial << "A\n";
+  // -- flag (& optionally filter) any dud readings ---------------------------------------
+  if (!na_batV && (battV < BATTV_MIN || battV > BATTV_MAX)) dudvals++;
+  if (!na_batA && (battA < BATTA_MIN || battA > BATTA_MAX)) dudvals++;
+  if (!na_pvW  && (PV_W  >   PVW_MAX ))                     dudvals++;
+  if (!na_kWh  && (kWh   >   KWH_MAX ))                     dudvals++;
+  if (LOAD_AMPS){ if (!na_lodA  && (loadA< LOADA_MIN || loadA > LOADA_MAX)) dudvals++; }
+  // -- in-line reporting -----------------------------------------------------------------
+  if (!VERBOSE && dudvals) Serial << " *"; // flag if this reading contains one or more dud values
+  if (dudvals <= maxduds){
+    if (!VERBOSE) Serial << '\t';  else Serial << " "; 
+    reportDeviceState();  Serial << " ";
+    reportChargerError(); Serial << " ";
+    if (na_batV)  Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(battV,2),5);  Serial << "V ";
+    if (na_batA)  Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(battA,1),5);  Serial << "A | ";
+    if (na_kWh)   Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(kWh  ,2),6);  Serial << "kWh ";
+    if (na_pvW)   Serial << "n/a-"; else Serial << _WIDTH(_FLOAT(PV_W ,0),3);  Serial << "W  ";
+    if (LOAD_AMPS) {if (na_lodA) 
+                  Serial << " n/a-"; else Serial << _WIDTH(_FLOAT(loadA,1),4); Serial << "A";
+    }
+  }
+  if (dudvals) Serial << "\t[duds: " << dudvals << "]";
+  // --------------------------------------------------------------------------------------
+  dudvals = 0;  
+  na_batV = false;
+  na_batA = false;
+  na_kWh  = false;
+  na_pvW  = false;
+  na_lodA = false;
 }
 
 void reportDeviceState(){
-  if      (output[0] == 0) Serial << "_OFF_";
-  else if (output[0] == 1) Serial << "Low_P";
-  else if (output[0] == 2) Serial << "Fault";
-  else if (output[0] == 3) Serial << "Bulk ";
-  else if (output[0] == 4) Serial << "Absor";
-  else if (output[0] == 5) Serial << "Float";
-  else if (output[0] == 6) Serial << "Store";
-  else if (output[0] == 7) Serial << "Equal";
+  if      (output[0] == 0) Serial << "_OFF__";
+  else if (output[0] == 1) Serial << "Lo_PWR";
+  else if (output[0] == 2) Serial << "FAULT ";
+  else if (output[0] == 3) Serial << "_BULK_";
+  else if (output[0] == 4) Serial << "ABSORB";
+  else if (output[0] == 5) Serial << "FLOAT_";
+  else if (output[0] == 6) Serial << "Store ";
+  else if (output[0] == 7) Serial << "Eq_Man";
   else  Serial << "*" << _WIDTHZ(_HEX(output[0]),2) << "*";
 }
 
-void reportControllerError(){
+void reportChargerError(){
   if      (output[1] == 0) Serial << "no_err";
   else if (output[1] == 1) Serial << "BATHOT";
   else if (output[1] == 2) Serial << "VOLTHI";
@@ -149,7 +177,7 @@ void reportControllerError(){
 // Note: SC & BM use same bytes (2,3) for battery volts
 float parseBattVolts(){
   bool    neg       =  (output[3] & 0x80) >> 7;                   // extract sign bit
-  int16_t batt_mV10 = ((output[3] & 0x7F) << 8) + output[2];      // exclude sign bit from byte 3
+  int16_t batt_mV10 = ((output[3] & 0x7F) << 8) | output[2];      // exclude sign bit from byte 3
   if (batt_mV10 == 0x7FFF) na_batV = true;                       
   if (neg) batt_mV10 = batt_mV10 - 32768;                         // 2's complement = val - 2^(b-1) b = bit# = 16
   return (static_cast<float>(batt_mV10)/100);                     // integer units 10mV converted to V as float
@@ -158,7 +186,7 @@ float parseBattVolts(){
 // Battery Current (signed) 16 bits = sign bit + 15 bits
 float parseBattAmps(){
   bool neg = ((output[5]  & 0x80) >> 7);                          // extract sign bit
-  int16_t ma100 = ((output[5] & 0x7F) << 8) + output[4];          // exclude sign bit from byte 5
+  int16_t ma100 = ((output[5] & 0x7F) << 8) | output[4];          // exclude sign bit from byte 5
   if (ma100 == 0x7FFF) na_batA = true;
   if (neg) ma100 = ma100 - 32768;                                 // 2's complement = val - 2^(b-1) b = bit# = 16
   return (static_cast<float>(ma100)/10);                          // convert mA100 to float A
@@ -166,21 +194,21 @@ float parseBattAmps(){
 
 // Today's Yield 16bits (unsigned int) units 0.01kWh (10Wh). 
 float parseKWHtoday(){
-  uint16_t Wh10     = (output[7] << 8) + output[6];               // NB little endian: byte[7] <-> byte[6]  
+  uint16_t Wh10     = (output[7] << 8) | output[6];               // NB little endian: byte[7] <-> byte[6]  
   if (Wh10 == 0xFFFF) na_kWh = true;
   return (static_cast<float>(Wh10)/100);                          // convert integer in 10Wh units to kWh as float 
 }
 
 // PV panel power in Watts
 float parsePVpower(){
-  uint16_t pvW = (output[9] << 8) + output[8];                    // NB little endian: byte[9] <-> byte[8]
+  uint16_t pvW = (output[9] << 8) | output[8];                    // NB little endian: byte[9] <-> byte[8]
   if (pvW == 0xFFFF) na_pvW = true;
   return (static_cast<float>(pvW));                               // convert integer Watts to float 
 }
 
 // Load current? (Possibly irrelevant as VictronConnect doesn't even display this)
 float parseLoadAmps(){
-  uint16_t PVma100 = ((output[11] & 0x01) << 8) + output[10];     // NB little endian: byte[11] <-> byte[10] 
+  uint16_t PVma100 = ((output[11] & 0x01) << 8) | output[10];     // NB little endian: byte[11] <-> byte[10] 
   if (PVma100 == 0x1FF) na_lodA = true;
   return (static_cast<float>(PVma100)/10);                        //  convert integer in 100mA units to Amps as float 
 } 

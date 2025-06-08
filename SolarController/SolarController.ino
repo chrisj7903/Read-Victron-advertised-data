@@ -31,31 +31,47 @@ The <encryption key> unique to the device must be declared as the 16 byte array 
 
 NB: <device_address> and <encryption_key> must be lower case. 
 
----------------------------------------------------------------------------------------------------
-Once the progam is running entering "V" at the Serial Monitor toggles VERBOSE mode between more/less detailed status/info
-*/
+If device is reporting some dud readings, where the values reported are clearly wrong or corrupted, 
+you canturn FILTERING on to suppress dud readings. To temporarily enable filtering, enter F at the 
+Serial Monitor while the sketch is running. For permanent filtering set bool FILTERING = false in 
+ZZ.cpp before compiling. This relies on the user nominating appropriate threshholds in VSC.h for:
+  BATTV_MIN / MAX
+  BATTA_MIN / MAX
+  KWH_MAX
+  PVW_MAX
+  LOADA_MIN / MAX
+The current default thresholds are setup for a 24V system.
 
+Some Victon Solar Charger/Controllers don't have separate load terminals (e.g. MPPT100/30) whereas 
+some others do (for example: SmartSolar MPPT 75/10,75/15,100/15 & 100/20). These devices will usually 
+advertise "N/A" for load amps. To permanently disable load amps reporting, set bool LOAD_AMPS = false 
+in ZZ.cpp before compiling.
+
+Entering "V" at the Serial Monitor will toggle VERBOSE mode between more or less detailed reporting
+--------------------------------------------------------------------------------------------------- */
 #include "ZZ.h"
 #include "VSC.h"  // Victron Solar Controller
 
-int delay_ms  = 500;
+int scan_gap_ms   = 500;    // delay between scans 
+int scan_max_secs = 2;      // maximum scan timeout
 
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 2000) ;                                          // wait for serial, up to 1 sec
-  Serial << "\n\n======== Solar Controller ========\n";  
-  Serial << "* wolfssl : V" << LIBWOLFSSL_VERSION_STRING << '\n';  
-  Serial << "* Target  : "  << VICTRON_NAME << '\n';
-  Serial << "* Enter V to toggle VERBOSE mode ON/OFF\n";
-  Serial << "* init BLE ...\n";
+  Serial << F("\n\n======== Solar Controller ========\n");  
+  Serial << F("* wolfssl  : V") << LIBWOLFSSL_VERSION_STRING << '\n';  
+  Serial << F("* Target   : ")  << VICTRON_NAME << '\n';
+  Serial << F("* VERBOSE  : "); if (VERBOSE)   Serial << F("ON\n"); else Serial << F("OFF\n");
+  Serial << F("* FILTERING: "); if (FILTERING) Serial << F("ON\n"); else Serial << F("OFF\n");
+  Serial << F("\tEnter V to toggle VERBOSE mode ON/OFF\n");
+  Serial << F("\tEnter F to toggle FILTERING of dud readings ON/OFF\n");
+  Serial << F("* init BLE ...\n");
   BLEDevice::init("");
-  Serial << "* setup scan ...\n";
+  Serial << F("* setup scan ...\n");
   pBLEScan->setAdvertisedDeviceCallbacks(new AdDataCallback());
   pBLEScan->setActiveScan(true);            // uses more power, but get results faster
-//pBLEScan->setInterval(100);               // time between consecutive scan starts
-//pBLEScan->setWindow(99);                  // duration of each scan, less or equal setInterval value
-  Serial << "* scan for devices every " << delay_ms << " ms (and up to " << scan_secs << " secs/scan)\n";
-  Serial << CF(dashes) << "setup done" << CF(dashes) << '\n';
+  Serial << F("* scan for devices every ") << scan_gap_ms << F(" ms (and up to ") << scan_max_secs << F(" secs/scan)\n");
+  Serial << CF(dashes) << F("setup done") << CF(dashes) << '\n' << '\n';
   displayHeadings();
 } 
 
@@ -64,31 +80,44 @@ uint32_t loopCount = 0;
 void loop() {
   loopCount++; 
   processSerialCommands();
-  pBLEScan->start(scan_secs, false);
-  delay(delay_ms);
+  mfrDataReceived = false; 
+  pBLEScan->start(scan_max_secs, false);
+  delay(scan_gap_ms);
   if (VERBOSE) Serial << '\n';
   printLoopCount();
-  if (VERBOSE) {
-    Serial << CF(line);
-    Serial <<  "data  : "; printBIGarray(); Serial << '\n';
-  }
-  decryptAesCtr(VERBOSE);
-  if (VERBOSE) {
-    Serial <<   "output: "; printByteArray(output); Serial << '\n';
-  //Serial <<   "binary:\n";     printBins(output); Serial << '\n';
-    Serial <<   "values: "; 
-  }
-  reportSCvalues();
+  if(mfrDataReceived) {
+    if (VERBOSE) {
+      Serial << CF(line);
+      Serial <<  F("data  : "); printBIGarray(); Serial << '\n';
+    }
+    decryptAesCtr(VERBOSE);
+    if (VERBOSE) {
+      Serial << F("output: "); printByteArray(output); Serial << '\n';
+    //Serial << F("binary:\n");     printBins(output); Serial << '\n';
+      Serial << F("values: "); 
+    }
+    reportSCvalues();
+  } 
+  else {
+    Serial << '\t';
+    if (VERBOSE) Serial << F("** No device matching ") << VICTRON_ADDRESS << F(" found during last scan ** "); //(" << t2-t1 << ")";
+    else         Serial << F("** Target device not found **");
+  } 
+  Serial << '\n';
 } // loop
 
 void displayHeadings(){
-  Serial << '\n';
-  Serial << "\tstate " << "error  " << "battV " << "battA  " << "  kWh   " << "Watts " << "loadA\n";  
-  Serial << "\t----- " << "-----  " << "----- " << "-----  " << "------- " << "----- " << "-----\n";  
+  if (LOAD_AMPS){
+    Serial << F("\tstate  error  batt V batt A      kWh    PV W load A\n");  
+    Serial << F("\t------ ------ ------ ------   --------- ---- ------\n"); }
+  else {
+    Serial << F("\tstate  error  batt V batt A      kWh    PV W\n");  
+    Serial << F("\t------ ------ ------ ------   --------- ----\n"); }
 }
 
 void printLoopCount(){
   if (loopCount < 100) Serial << "0";
   if (loopCount <  10) Serial << "0";
-  Serial << loopCount << ":\t";  
+  Serial << loopCount;
+  if (VERBOSE) Serial << F(" ");
 }
