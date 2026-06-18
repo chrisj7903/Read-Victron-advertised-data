@@ -121,11 +121,16 @@ NB: <device_address> and <encryption_key> must be lower case.
 See the detailed explanation in the introduction text of the main `.ino` file.
 
 #### 6.4 Libraries & Compiling
-Two libraries are used when compiling this program, the BLE library for Bluetooth Low Energy functionality and wolfssl for the AES-CTR decryption algorithms.
+Three libraries are used when compiling this program: 
+(1) BLE library for Bluetooth Low Energy functionality
+(2) wolfssl for the AES-CTR decryption algorithms
+(3) Streaming library by Mikal Hart 
 
 The BLE library is built into the Arduino IDE these days (I'm using IDE V2.3.6)
 
 The wolfssl library must be added using the library manager of the IDE, just search for wolfssl, check it's from wolfSSL Inc then install.
+
+The Streaming library simply minimises repetitive use of Serial.print(). 
 
 Before compiling select "`ESP32 Dev Module`" in the IDE pull-down for target board selection.
 
