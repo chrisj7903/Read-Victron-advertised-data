@@ -56,7 +56,7 @@ int scan_max_secs = 2;      // maximum scan timeout
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial && millis() < 2000) ;                                          // wait for serial, up to 2 sec
+  while (!Serial && millis() < 2000);                         // wait for serial, up to 2 sec
   Serial << F("\n\n======== Battery Monitor ========\n");
   Serial << F("* wolfssl  : V") << LIBWOLFSSL_VERSION_STRING << '\n';  
   Serial << F("* Target   : ")  << VICTRON_NAME << '\n';
@@ -67,8 +67,9 @@ void setup() {
   Serial << F("* init BLE ...\n");
   BLEDevice::init("");
   Serial << F("* setup scan ...\n");
+  pBLEScan = BLEDevice::getScan();                             // new line to prevent crash dumps!
   pBLEScan->setAdvertisedDeviceCallbacks(new AdDataCallback());
-  pBLEScan->setActiveScan(true);            // uses more power, but get results faster
+  pBLEScan->setActiveScan(true);                               // uses more power, but get results faster
   Serial << F("* scan for devices every ") << scan_gap_ms << F(" ms (and up to ") << scan_max_secs << F(" secs/scan)\n");
   Serial << CF(dashes) << F("setup done") << CF(dashes) << '\n';
   displayHeadings();
