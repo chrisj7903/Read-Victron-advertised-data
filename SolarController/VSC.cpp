@@ -40,7 +40,7 @@ void printByteArray(byte byteArray[16]);
 void printBins();
 
 // ----------------------------------------------------------------------
-BLEScan *pBLEScan = BLEDevice::getScan();
+BLEScan *pBLEScan = nullptr;                                            // avoids calling getScan() immediately (prevents repeating crash dumps)
 
 // --------------------------------------------------------------------------------
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
