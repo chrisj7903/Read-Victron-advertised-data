@@ -43,7 +43,7 @@ void printBIGarray();
 void printByteArray(byte byteArray[16]);
 void printBins();
 
-BLEScan *pBLEScan = nullptr();                                          // don't call getScan() immediately (else crash dumps happen!)
+BLEScan *pBLEScan = nullptr;                                          // don't call getScan() immediately (else crash dumps happen!)
 
 // --------------------------------------------------------------------------------
 // Scan for BLE servers for the advertising service we seek. Called for each advertising server
